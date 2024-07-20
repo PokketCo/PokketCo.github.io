@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="fa">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Video Player</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vidstack/styles/defaults.min.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vidstack/styles/community-skin/video.min.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Vazirmatn&family=DM+Sans&display=swap" rel="stylesheet">
+  <script type="module" src="https://cdn.jsdelivr.net/npm/vidstack/dist/cdn/prod.min.js"></script>
+  <style>
+      * {
+    font-family: 'Vazirmatn', sans-serif !important;
+  }
+
+  body, html {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    width: 100%;
+    overflow: hidden !important;
+    background-color: black;
+    font-family: 'Vazirmatn', sans-serif !important;
+  }
+    .video-container {
+      display: flex;
+      justify-content: center !important;
+      align-items: center !important;
+      height: 100%;
+      width: 100%;
+      padding: 12px;
+      box-sizing: border-box;
+      overflow: hidden !important;
+      position: relative;
+    }
+    media-player {
+      display: block;
+      width: 100% !important;
+      height: 100% !important;
+      max-width: 100% !important;
+      max-height: 100% !important;
+      background-color: black;
+      border-radius: 15px;
+      overflow: hidden;
+      position: relative;
+      aspect-ratio: 16/9;
+      font-family: 'Vazirmatn', sans-serif !important;
+    }
+    media-player.fullscreen {
+      border-radius: 0;
+      object-fit: cover;
+      width: auto;
+      height: auto;
+      aspect-ratio: auto;
+      font-family: 'Vazirmatn', sans-serif !important;
+    }
+    media-poster {
+      object-fit: cover;
+      width: auto;
+      height: auto;
+      aspect-ratio: 16/9;
+    }
+    .rotate-device {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.720);
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      z-index: 9999;
+      font-family: 'Vazirmatn', sans-serif;
+      backdrop-filter: blur(24px);
+      transition: opacity 1s ease;
+    }
+    .rotate-device.active {
+      display: flex;
+      opacity: 1;
+    }
+    .rotate-image {
+      width: 21%;
+      opacity: 0.6;
+    }
+    .wifi-icon {
+      display: none;
+      position: absolute;
+      top: 15px;
+      left: 47.5%;
+      width: 30px;
+      opacity: 0.2;
+      z-index: 100;
+      animation: fadeIn 0.6s forwards;
+    }
+    .watermark {
+      position: absolute;
+      top: 15px;
+      left: 15px;
+      width: 39px;
+      opacity: 0;
+      z-index: 100;
+      cursor: pointer;
+      transition: opacity 0.6s ease;
+    }
+    .overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      z-index: 9999;
+      backdrop-filter: blur(1px);
+      transition: backdrop-filter 2.1s ease, background-color 2.1s ease;
+      background-color: rgba(0, 0, 0, 0.0);
+      color: white;
+    }
+
+    .overlay.active {
+      display: flex;
+      animation: fadeInOver 0.6s forwards;
+    }
+
+    .overlay.inactive {
+      display: none !important;
+      animation: fadeOutOver 0.6s forwards;
+    }
+
+    .overlay-content {
+      opacity: 0;
+      transition: opacity 0.6s ease;
+      font-family: 'DM Sans', sans-serif;
+      text-align: left;
+    }
+
+    .overlay.active .overlay-content {
+      opacity: 0.8;
+    }
+
+    .overlay-content h1, .overlay-content p {
+      margin: 12px 0;
+      font-size: 1.1em;
+    }
+    @keyframes fadeIn {
+      0% { opacity: 0; }
+      100% { opacity: 0.3; }
+    }
+
+    @keyframes fadeOut {
+      0% { opacity: 0.3; }
+      100% { opacity: 0; }
+    }
+    @keyframes fadeInOver {
+    0% {
+    opacity: 0;
+    backdrop-filter: blur(1px);
+    background-color: rgba(0, 0, 0, 0);
+  }
+    100% {
+    opacity: 1;
+    backdrop-filter: blur(30px);
+    background-color: rgba(0, 0, 0, 0.400);
+  }
+  }
+
+  @keyframes fadeOutOver {
+    0% {
+    opacity: 1;
+    backdrop-filter: blur(30px);
+    background-color: rgba(0, 0, 0, 0.400);
+  }
+    100% {
+    opacity: 0;
+    backdrop-filter: blur(1px);
+    background-color: rgba(0, 0, 0, 0);
+  }
+  }
+  .wifi-icon.fade-out {
+      animation: fadeOut 0.6s forwards;
+    }
+
+    .watermark.fade-out {
+      animation: fadeOut 0.3s forwards;
+  }
+  .skip-intro-btn {
+    position: absolute;
+    top: 15px;
+    left: 15px;
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    background-color: rgba(24, 24, 24, 0.4);
+    display: flex;
+    backdrop-filter: blur(12px);
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.6s ease;
+    z-index: 101;
+  }
+  .skip-intro-btn img {
+    width: 15px;
+    height: 15px;
+    opacity: 0.45;
+  }
+
+  .skip-intro-btn.show {
+    opacity: 1;
+    pointer-events: auto;
+  }
+  .watermark.show {
+    opacity: 0.2;
+    pointer-events: auto;
+  }
+  .watermark.hidden {
+    display: none;
+    pointer-events: none;
+  }
+  </style>
+</head>
+<body>
+
+<div class="rotate-device" id="rotateDevice">
+  <img src="img/rotate.png" alt="Rotate Device" class="rotate-image">
+</div>
+
+<div class="overlay" id="overlay">
+  <div class="overlay-content">
+    <h1>Furiosa 2024</h1>
+    <p>2h 28m</p>
+    <p>Anya Taylor-Joy, Chris Hemsworth, Tom Burke</p>
+  </div>
+</div>
+
+<div class="video-container">
+  <media-player
+    id="mediaPlayer"
+    title="Dune 2"
+    src="https://s43.namasha.com/videos/dl/7466912361-720p/%D8%A8%D9%87%D8%AA%D8%B1%DB%8C%D9%86-%D9%84%D9%BE-%D8%AA%D8%A7%D9%BE-%D9%87%D8%A7%DB%8C-20-%D8%AA%D8%A7-30-%D9%85%DB%8C%D9%84%DB%8C%D9%88%D9%86-%D8%AA%D9%88%D9%85%D8%A7%D9%86-720p.mp4"
+    poster="./poster/dune2.webp"
+    aspect-ratio="16/9"
+    crossorigin
+    playsinline
+  >
+    <media-outlet>
+      <media-poster
+        alt="Dune 2"
+      ></media-poster>
+      <track
+        src="./subs/dune2.vtt"
+        label="Persian"
+        srclang="fa"
+        kind="subtitles"
+        default
+      />
+      <track
+        src="https://media-files.vidstack.io/sprite-fight/subs/english.vtt"
+        label="English"
+        srclang="en-US"
+        kind="subtitles"
+      />
+    </media-outlet>
+    <media-community-skin></media-community-skin>
+    <img src="img/watermark.png" alt="Watermark" class="watermark" id="watermark">
+    <img src="img/wifi.png" alt="No Internet" class="wifi-icon" id="wifiIcon">
+    <div class="skip-intro-btn" id="skipIntroBtn">
+      <img src="img/skip.png" alt="Skip Intro">
+    </div>      
+    <!-- <div class="skip-intro-btn" id="skipIntroBtn">رد کردن تیتراژ</div> -->
+  </media-player>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const rotateDeviceMessage = document.getElementById('rotateDevice');
+  const mediaPlayer = document.getElementById('mediaPlayer');
+  const watermark = document.getElementById('watermark');
+  const overlay = document.getElementById('overlay');
+  const skipIntroBtn = document.getElementById('skipIntroBtn');
+  let isPaused = false;
+  let skipIntroClicked = false;
+
+  function checkOrientation() {
+    if (window.innerHeight > window.innerWidth) {
+      rotateDeviceMessage.classList.add('active');
+      mediaPlayer.pause();
+    } else {
+      rotateDeviceMessage.classList.remove('active');
+    }
+  }
+
+  window.addEventListener('resize', checkOrientation);
+  window.addEventListener('load', checkOrientation);
+
+  document.addEventListener('fullscreenchange', () => {
+    if (document.fullscreenElement) {
+      mediaPlayer.classList.add('fullscreen');
+      watermark.style.pointerEvents = 'none'; // Disable watermark click in fullscreen
+    } else {
+      mediaPlayer.classList.remove('fullscreen');
+      watermark.style.pointerEvents = 'auto'; // Enable watermark click outside fullscreen
+    }
+  });
+
+  watermark.addEventListener('click', () => {
+    if (watermark.classList.contains('show') && !mediaPlayer.classList.contains('fullscreen')) {
+      if (!isPaused) {
+        mediaPlayer.pause();
+        overlay.classList.remove('inactive');
+        overlay.classList.add('active');
+        isPaused = true;
+      } else {
+        mediaPlayer.play();
+        overlay.classList.remove('active');
+        overlay.classList.add('inactive');
+        isPaused = false;
+      }
+    }
+  });
+
+  overlay.addEventListener('click', () => {
+    mediaPlayer.play();
+    overlay.classList.remove('active');
+    overlay.classList.add('inactive');
+    isPaused = false;
+  });
+
+  mediaPlayer.addEventListener('pause', () => {
+    document.body.style.background = 'black';
+  });
+
+  mediaPlayer.addEventListener('ended', () => {
+    document.body.style.background = 'black';
+  });
+
+  const wifiIcon = document.getElementById('wifiIcon');
+
+  function checkInternetConnection() {
+    if (navigator.onLine) {
+      wifiIcon.classList.remove('fade-out');
+      wifiIcon.style.display = 'none';
+      watermark.classList.remove('fade-out');
+    } else {
+      wifiIcon.style.display = 'block';
+      setTimeout(() => {
+        wifiIcon.classList.remove('fade-out');
+        watermark.classList.add('fade-out');
+      }, 10);
+    }
+  }
+
+  function hideWifiIcon() {
+    wifiIcon.classList.add('fade-out');
+    watermark.classList.remove('fade-out');
+    setTimeout(() => {
+      wifiIcon.style.display = 'none';
+    }, 500);
+  }
+
+  function showWifiIcon() {
+    if (!navigator.onLine) {
+      wifiIcon.style.display = 'block';
+      setTimeout(() => {
+        wifiIcon.classList.remove('fade-out');
+        watermark.classList.add('fade-out');
+      }, 10);
+    }
+  }
+
+  window.addEventListener('online', checkInternetConnection);
+  window.addEventListener('offline', checkInternetConnection);
+  window.addEventListener('load', checkInternetConnection);
+
+  document.addEventListener('contextmenu', event => event.preventDefault());
+  document.addEventListener('dragstart', event => event.preventDefault());
+  document.addEventListener('selectstart', event => event.preventDefault());
+  document.addEventListener('copy', event => event.preventDefault());
+  document.addEventListener('cut', event => event.preventDefault());
+  document.addEventListener('paste', event => event.preventDefault());
+
+  window.addEventListener('load', () => {
+    mediaPlayer.volume = 0.8;
+    history.pushState(null, '', '/');
+  });
+
+  document.addEventListener('keydown', event => {
+    if (event.code === 'Space') {
+      if (mediaPlayer.paused) {
+        mediaPlayer.play();
+      } else {
+        mediaPlayer.pause();
+      }
+    }
+  });
+
+  function fadeInAudio() {
+    let volume = 0;
+    mediaPlayer.volume = volume;
+    const fadeDuration = 3000;
+    const interval = 240;
+    const step = 0.8 / (fadeDuration / interval);
+
+    const fadeInterval = setInterval(() => {
+      if (volume < 0.8) {
+        volume = Math.min(volume + step, 0.8);
+        mediaPlayer.volume = volume;
+      } else {
+        clearInterval(fadeInterval);
+      }
+    }, interval);
+  }
+
+  mediaPlayer.addEventListener('play', fadeInAudio);
+
+  function skipIntro() {
+    mediaPlayer.currentTime = 60; //Skip time
+    skipIntroBtn.classList.remove('show');
+    skipIntroBtn.style.pointerEvents = 'none';
+    watermark.style.display = 'block';
+  }
+
+  skipIntroBtn.addEventListener('click', () => {
+    if (!skipIntroClicked) {
+      skipIntroClicked = true;
+      skipIntro();
+    }
+  });
+
+  setTimeout(() => {
+    if (!skipIntroClicked) {
+      skipIntroBtn.classList.add('show');
+      skipIntroBtn.style.pointerEvents = 'auto';
+      watermark.style.display = 'none';
+      setTimeout(() => {
+        if (skipIntroBtn.classList.contains('show')) {
+          skipIntroBtn.classList.remove('show');
+          skipIntroBtn.style.pointerEvents = 'none';
+          watermark.style.display = 'block';
+        }
+      }, 20000); //Duration
+    }
+  }, 5000); //Start Skip-btn
+
+  setTimeout(() => {
+    watermark.classList.add('show');
+  }, 30000); //Start Watermark-btn
+});
+
+</script>
+
+</body>
+</html>
