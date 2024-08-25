@@ -1,459 +1,996 @@
 <!DOCTYPE html>
-<html lang="fa">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Video Player</title>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vidstack/styles/defaults.min.css" />
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vidstack/styles/community-skin/video.min.css" />
-  <link href="https://fonts.googleapis.com/css2?family=Vazirmatn&family=DM+Sans&display=swap" rel="stylesheet">
-  <script type="module" src="https://cdn.jsdelivr.net/npm/vidstack/dist/cdn/prod.min.js"></script>
-  <style>
-      * {
-    font-family: 'Vazirmatn', sans-serif !important;
-  }
-
-  body, html {
-    margin: 0;
-    padding: 0;
-    height: 100%;
-    width: 100%;
-    overflow: hidden !important;
-    background-color: black;
-    font-family: 'Vazirmatn', sans-serif !important;
-  }
-    .video-container {
-      display: flex;
-      justify-content: center !important;
-      align-items: center !important;
-      height: 100%;
-      width: 100%;
-      padding: 12px;
-      box-sizing: border-box;
-      overflow: hidden !important;
-      position: relative;
-    }
-    media-player {
-      display: block;
-      width: 100% !important;
-      height: 100% !important;
-      max-width: 100% !important;
-      max-height: 100% !important;
-      background-color: black;
-      border-radius: 15px;
-      overflow: hidden;
-      position: relative;
-      aspect-ratio: 16/9;
-      font-family: 'Vazirmatn', sans-serif !important;
-    }
-    media-player.fullscreen {
-      border-radius: 0;
-      object-fit: cover;
-      width: auto;
-      height: auto;
-      aspect-ratio: auto;
-      font-family: 'Vazirmatn', sans-serif !important;
-    }
-    media-poster {
-      object-fit: cover;
-      width: auto;
-      height: auto;
-      aspect-ratio: 16/9;
-    }
-    .rotate-device {
-      display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background-color: rgba(0, 0, 0, 0.720);
-      justify-content: center;
-      align-items: center;
-      text-align: center;
-      z-index: 9999;
-      font-family: 'Vazirmatn', sans-serif;
-      backdrop-filter: blur(24px);
-      transition: opacity 1s ease;
-    }
-    .rotate-device.active {
-      display: flex;
-      opacity: 1;
-    }
-    .rotate-image {
-      width: 21%;
-      opacity: 0.6;
-    }
-    .wifi-icon {
-      display: none;
-      position: absolute;
-      top: 15px;
-      left: 47.5%;
-      width: 30px;
-      opacity: 0.2;
-      z-index: 100;
-      animation: fadeIn 0.6s forwards;
-    }
-    .watermark {
-      position: absolute;
-      top: 15px;
-      left: 15px;
-      width: 39px;
-      opacity: 0;
-      z-index: 100;
-      cursor: pointer;
-      transition: opacity 0.6s ease;
-    }
-    .overlay {
-      display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      justify-content: center;
-      align-items: center;
-      text-align: center;
-      z-index: 9999;
-      backdrop-filter: blur(1px);
-      transition: backdrop-filter 2.1s ease, background-color 2.1s ease;
-      background-color: rgba(0, 0, 0, 0.0);
-      color: white;
-    }
-
-    .overlay.active {
-      display: flex;
-      animation: fadeInOver 0.6s forwards;
-    }
-
-    .overlay.inactive {
-      display: none !important;
-      animation: fadeOutOver 0.6s forwards;
-    }
-
-    .overlay-content {
-      opacity: 0;
-      transition: opacity 0.6s ease;
-      font-family: 'DM Sans', sans-serif;
-      text-align: left;
-    }
-
-    .overlay.active .overlay-content {
-      opacity: 0.8;
-    }
-
-    .overlay-content h1, .overlay-content p {
-      margin: 12px 0;
-      font-size: 1.1em;
-    }
-    @keyframes fadeIn {
-      0% { opacity: 0; }
-      100% { opacity: 0.3; }
-    }
-
-    @keyframes fadeOut {
-      0% { opacity: 0.3; }
-      100% { opacity: 0; }
-    }
-    @keyframes fadeInOver {
-    0% {
-    opacity: 0;
-    backdrop-filter: blur(1px);
-    background-color: rgba(0, 0, 0, 0);
-  }
-    100% {
-    opacity: 1;
-    backdrop-filter: blur(30px);
-    background-color: rgba(0, 0, 0, 0.400);
-  }
-  }
-
-  @keyframes fadeOutOver {
-    0% {
-    opacity: 1;
-    backdrop-filter: blur(30px);
-    background-color: rgba(0, 0, 0, 0.400);
-  }
-    100% {
-    opacity: 0;
-    backdrop-filter: blur(1px);
-    background-color: rgba(0, 0, 0, 0);
-  }
-  }
-  .wifi-icon.fade-out {
-      animation: fadeOut 0.6s forwards;
-    }
-
-    .watermark.fade-out {
-      animation: fadeOut 0.3s forwards;
-  }
-  .skip-intro-btn {
-    position: absolute;
-    top: 15px;
-    left: 15px;
-    width: 42px;
-    height: 42px;
-    border-radius: 50%;
-    background-color: rgba(24, 24, 24, 0.4);
-    display: flex;
-    backdrop-filter: blur(12px);
-    justify-content: center;
-    align-items: center;
-    cursor: pointer;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.6s ease;
-    z-index: 101;
-  }
-  .skip-intro-btn img {
-    width: 15px;
-    height: 15px;
-    opacity: 0.45;
-  }
-
-  .skip-intro-btn.show {
-    opacity: 1;
-    pointer-events: auto;
-  }
-  .watermark.show {
-    opacity: 0.2;
-    pointer-events: auto;
-  }
-  .watermark.hidden {
-    display: none;
-    pointer-events: none;
-  }
-  </style>
+<html lang="fa" class="cmmz3"><head>
+    <meta charset="utf-8">
+    <title>Pokket</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <link href="css/H9jtdUI0aO2h.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/q4bvs0plsqFT.css">
+    <link href="css/2Ixo1unrhTIq.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;700&display=swap" rel="stylesheet">
+    <script defer="" data-domain="pokket.ir" src="js/SNFaNN5k5Qlu.js"></script>
 </head>
-<body>
+<body class="c4f4x cnihn cs2bp c55gg czrq6" data-aos-easing="ease-out-cubic" data-aos-duration="1000" data-aos-delay="0">
 
-<div class="rotate-device" id="rotateDevice">
-  <img src="img/rotate.png" alt="Rotate Device" class="rotate-image">
+
+
+
+<!-- Page wrapper -->
+<div class="crm2f cbvce cxgh5 cfebz c4agq">
+
+    <!-- Site header -->
+    <header class="ca5ue ca0gw cverl" dir="rtl">
+        <div class="co3q6 csm51 csya4 ccyhi">
+            <div class="cm7bi c2sao c4jjw c4agq cm0fl">
+
+                <!-- Site branding -->
+                <div class="ci0vw">
+                    <!-- Logo -->
+                    <a class="cwban" href="index.html" aria-label="Pokket">
+                        <img class="cbdyn" src="images/JgmU5RwoBUmY.svg" width="38" height="38" alt="Stellar">
+                    </a>
+                </div>
+
+                <!-- Desktop navigation -->
+                <nav class="cp37h cjnbw ch9bk">
+
+                    <!-- Desktop menu links -->
+                    <ul class="csqqr c2sao cbsu6 c4agq c9wgl">
+                        <li>
+                            <a class="c0z2s cit3o cx3jz ccqx1 cgi3a cqxsj ch2qt cvdvu ciz32" href="about.html">درباره&zwnj;ما</a>
+                        </li>
+                        <li>
+                            <a class="c0z2s cit3o cx3jz ccqx1 cgi3a cqxsj ch2qt cvdvu ciz32" href="integrations.html">تعاملات</a>
+                        </li>
+                        <li>
+                            <a class="c0z2s cit3o cx3jz ccqx1 cgi3a cqxsj ch2qt cvdvu ciz32" href="pricing.html">قیمت&zwnj;گذاری</a>
+                        </li>
+                        <li>
+                            <a class="c0z2s cit3o cx3jz ccqx1 cgi3a cqxsj ch2qt cvdvu ciz32" href="customers.html">مشتریان</a>
+                        </li>
+                        <li>
+                            <a class="c0z2s cit3o cx3jz ccqx1 cgi3a cqxsj ch2qt cvdvu ciz32" href="changelog.html">تغییرات</a>
+                        </li>
+                    </ul>
+
+                </nav>
+
+                <!-- Desktop sign in links -->
+
+
+                <!-- Mobile menu -->
+                <div class="c2sao c89zz cwap3 c4agq" x-data="{ expanded: false }">
+
+                    <!-- Hamburger button -->
+                    <button class="c381v" :class="{ 'active': expanded }" @click.stop="expanded = !expanded" aria-controls="mobile-nav" :aria-expanded="expanded" aria-expanded="false">
+                        <span class="cmmna">Menu</span>
+                        <svg class="c0z2s cit3o cm1cr cx3jz cgi3a cqxsj csq2q c7vsq" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                            <rect y="2" width="20" height="2" rx="1"></rect>
+                            <rect y="9" width="20" height="2" rx="1"></rect>
+                            <rect y="16" width="20" height="2" rx="1"></rect>
+                        </svg>
+                    </button>
+
+                    <!-- Mobile navigation -->
+                    <nav id="mobile-nav" class="cbvce cml7t cpjek cgi3a ca5ue chez1 csm51 c1tcw ca0gw ccxsu ccyhi" x-ref="mobileNav" :style="expanded ? 'max-height: ' + $refs.mobileNav.scrollHeight + 'px; opacity: 1' : 'max-height: 0; opacity: .8'" @click.outside="expanded = false" @keydown.escape.window="expanded = false" style="max-height: 0; opacity: .8">
+                        <ul class="c3d7q cy8oh c8nst coow7 cn544 ccyhi">
+                            <li>
+                                <a class="c0z2s cit3o ccqx1 coow7 cvdvu c4agq" href="about.html">درباره&zwnj;ما</a>
+                            </li>
+                            <li>
+                                <a class="c0z2s cit3o ccqx1 coow7 cvdvu c4agq" href="integrations.html">تعاملات</a>
+                            </li>
+                            <li>
+                                <a class="c0z2s cit3o ccqx1 coow7 cvdvu c4agq" href="pricing.html">قیمت&zwnj;گذاری</a>
+                            </li>
+                            <li>
+                                <a class="c0z2s cit3o ccqx1 coow7 cvdvu c4agq" href="customers.html">مشتریان</a>
+                            </li>
+                            <li>
+                                <a class="c0z2s cit3o ccqx1 coow7 cvdvu c4agq" href="changelog.html">تغییرات</a>
+                            </li>
+                        </ul>
+                    </nav>
+
+                </div>
+
+            </div>
+        </div>
+    </header>
+
+    <!-- Page content -->
+    <main class="c9wgl">
+
+        <!-- Hero -->
+        <section>
+            <div class="co3q6 c27r3 csm51 csya4 ccyhi">
+
+                <!-- Particles animation -->
+                <div class="ca5ue cwmqr ch67j" aria-hidden="true">
+                    <canvas data-particle-animation="" width="405" height="445" style="width: 412px; height: 453px;"></canvas>
+                </div>
+
+                <!-- Illustration -->
+                <div class="c3sb3 czwja cbvce ca5ue cwmqr cv9w8 ch67j" aria-hidden="true">
+                    <div class="c2vxt c3x17 ca5ue c2s0w ch67j">
+                        <img src="images/IxyeeYtlSJGw.svg" class="cbdyn" width="2146" height="774" alt="Hero Illustration">
+                    </div>
+                </div>
+
+                <div class="chhmv cbcs7 ceyts cp02i">
+
+                    <!-- Hero content -->
+                    <div class="cw9su c80wd csya4">
+                        <div class="cr8dw">
+                            <div class="cnna9 c1mpe ccqfq ctaxy cwban c27r3" dir="rtl">
+                                <a class="cfhua c272e cpm5o c8isz c0z2s c1mpe ccqfq cit3o cx3jz cgi3a cqxsj c27r3 coqcu cfl4k c1xwr cq2yg" href="#0">
+                                    <span class="c2sao cwban c27r3">نسخه بتا در دسترس قرار گرفت<span class="c9pof c406y cxxyq c3fbv cx3jz cgi3a cqzh1">-&gt;</span>
+                                    </span>
+                                </a>
+                            </div>
+                        </div>
+                        <h1 class="cc7gh ccqrz cx8zw c6df8 cfcmr ctwez cvc1j cbmj0" dir="rtl">پاکت؛ زندگی به سبک.</h1>
+                        <p class="cit3o cbgr1 cpvtt" dir="rtl">لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ و با استفاده از طراحان گرافیک است.</p>
+                        <div class="cpp4l c9wnx ckigx cmcsl csko9 cavuv chcps csya4">
+                            <div>
+                                <a class="ccqrz cl7hu colil csdcv cpy2n cx3jz cgi3a cqxsj cdccy ca0gw cq2yg cyijk" href="#0" dir="rtl">دریافت کنید</a>
+                            </div>
+                            <div>
+                                <a class="ck6jn c0z2s cupde c5myo cs2bp cx3jz cgi3a cqxsj ca0gw cyijk" href="#0">
+                                    <svg class="c6ek1 cl3jq cygn6" xmlns="http://www.w3.org/2000/svg" width="16" height="16">
+                                        <path d="m1.999 0 1 2-1 2 2-1 2 1-1-2 1-2-2 1zM11.999 0l1 2-1 2 2-1 2 1-1-2 1-2-2 1zM11.999 10l1 2-1 2 2-1 2 1-1-2 1-2-2 1zM6.292 7.586l2.646-2.647L11.06 7.06 8.413 9.707zM0 13.878l5.586-5.586 2.122 2.121L2.12 16z"></path>
+                                    </svg>
+                                    <span>مشاهده تغییرات</span>
+                                </a>
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- Clients -->
+        <section>
+            <div class="co3q6 c27r3 csm51 csya4 ccyhi">
+
+                <!-- Particles animation -->
+                <div class="co3q6 ca5ue csm51 cwmqr csya4 ccyhi">
+                    <div class="ca5ue cwmqr ch67j" aria-hidden="true">
+                        <canvas data-particle-animation="" data-particle-quantity="5" width="405" height="125" style="width: 412px; height: 127px;"></canvas>
+                    </div>
+                </div>
+
+                <div class="ce968 cx3i6">
+                    <div class="cbvce">
+                        <!-- Carousel built with Swiper.js [https://swiperjs.com/] -->
+                        <!-- * Initialized in src/js/YxCp7BHO4ZYI.js -->
+                        <!-- * Custom styles in src/css/additional-styles/theme.scss -->
+                        <div class="clients-carousel swiper-container c272e c43wz c5sp8 cjld2 cz5p2 ce99m c1mpe cht44 ccqfq ciw4n cww36 cawys cek60 cyayz cvjqm c27r3 swiper-initialized swiper-horizontal swiper-pointer-events swiper-android">
+                            <div class="swiper-wrapper ccbua c2sao ctibm" id="swiper-wrapper-397ad6b2bfc34a11" aria-live="off" style="transition-duration: 5000ms; transform: translate3d(-1555.5px, 0px, 0px);"><div class="swiper-slide cmex3 swiper-slide-duplicate" data-swiper-slide-index="0" role="group" aria-label="1 / 9" style="margin-right: 64px;">
+                                    <img src="images/cX04aaFkrYQ7.svg" alt="Client 01" width="110" height="21">
+                                </div><div class="swiper-slide cmex3 swiper-slide-duplicate swiper-slide-duplicate-prev" data-swiper-slide-index="1" role="group" aria-label="2 / 9" style="margin-right: 64px;">
+                                    <img src="images/QHKktrArGdmX.svg" alt="Client 02" width="70" height="25">
+                                </div><div class="swiper-slide cmex3 swiper-slide-duplicate swiper-slide-duplicate-active" data-swiper-slide-index="2" role="group" aria-label="3 / 9" style="margin-right: 64px;">
+                                    <img class="cwkk0" src="images/mmCktTAz7ChX.svg" alt="Client 03" width="107" height="33">
+                                </div><div class="swiper-slide cmex3 swiper-slide-duplicate swiper-slide-duplicate-next" data-swiper-slide-index="3" role="group" aria-label="4 / 9" style="margin-right: 64px;">
+                                    <img src="images/5nkzHgOauu46.svg" alt="Client 04" width="85" height="36">
+                                </div><div class="swiper-slide cmex3 swiper-slide-duplicate" data-swiper-slide-index="4" role="group" aria-label="5 / 9" style="margin-right: 64px;">
+                                    <img src="images/Fx3ekiB7XtBF.svg" alt="Client 05" width="86" height="18">
+                                </div><div class="swiper-slide cmex3 swiper-slide-duplicate" data-swiper-slide-index="5" role="group" aria-label="6 / 9" style="margin-right: 64px;">
+                                    <img src="images/aPiMk84VjU4I.svg" alt="Client 06" width="78" height="34">
+                                </div><div class="swiper-slide cmex3 swiper-slide-duplicate" data-swiper-slide-index="6" role="group" aria-label="7 / 9" style="margin-right: 64px;">
+                                    <img src="images/1o1079lqH5Sw.svg" alt="Client 07" width="83" height="23">
+                                </div><div class="swiper-slide cmex3 swiper-slide-duplicate" data-swiper-slide-index="7" role="group" aria-label="8 / 9" style="margin-right: 64px;">
+                                    <img src="images/T7DL471ukbfj.svg" alt="Client 08" width="98" height="26">
+                                </div><div class="swiper-slide cmex3 swiper-slide-duplicate" data-swiper-slide-index="8" role="group" aria-label="9 / 9" style="margin-right: 64px;">
+                                    <img class="chz6t" src="images/ESF0Qa7wYVut.svg" alt="Client 09" width="92" height="28">
+                                </div>
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                <!-- Carousel items -->
+                                <div class="swiper-slide cmex3" data-swiper-slide-index="0" role="group" aria-label="1 / 9" style="margin-right: 64px;">
+                                    <img src="images/cX04aaFkrYQ7.svg" alt="Client 01" width="110" height="21">
+                                </div>
+                                <div class="swiper-slide cmex3 swiper-slide-prev" data-swiper-slide-index="1" role="group" aria-label="2 / 9" style="margin-right: 64px;">
+                                    <img src="images/QHKktrArGdmX.svg" alt="Client 02" width="70" height="25">
+                                </div>
+                                <div class="swiper-slide cmex3 swiper-slide-active" data-swiper-slide-index="2" role="group" aria-label="3 / 9" style="margin-right: 64px;">
+                                    <img class="cwkk0" src="images/mmCktTAz7ChX.svg" alt="Client 03" width="107" height="33">
+                                </div>
+                                <div class="swiper-slide cmex3 swiper-slide-next" data-swiper-slide-index="3" role="group" aria-label="4 / 9" style="margin-right: 64px;">
+                                    <img src="images/5nkzHgOauu46.svg" alt="Client 04" width="85" height="36">
+                                </div>
+                                <div class="swiper-slide cmex3" data-swiper-slide-index="4" role="group" aria-label="5 / 9" style="margin-right: 64px;">
+                                    <img src="images/Fx3ekiB7XtBF.svg" alt="Client 05" width="86" height="18">
+                                </div>
+                                <div class="swiper-slide cmex3" data-swiper-slide-index="5" role="group" aria-label="6 / 9" style="margin-right: 64px;">
+                                    <img src="images/aPiMk84VjU4I.svg" alt="Client 06" width="78" height="34">
+                                </div>
+                                <div class="swiper-slide cmex3" data-swiper-slide-index="6" role="group" aria-label="7 / 9" style="margin-right: 64px;">
+                                    <img src="images/1o1079lqH5Sw.svg" alt="Client 07" width="83" height="23">
+                                </div>
+                                <div class="swiper-slide cmex3" data-swiper-slide-index="7" role="group" aria-label="8 / 9" style="margin-right: 64px;">
+                                    <img src="images/T7DL471ukbfj.svg" alt="Client 08" width="98" height="26">
+                                </div>
+                                <div class="swiper-slide cmex3" data-swiper-slide-index="8" role="group" aria-label="9 / 9" style="margin-right: 64px;">
+                                    <img class="chz6t" src="images/ESF0Qa7wYVut.svg" alt="Client 09" width="92" height="28">
+                                </div>
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                            <div class="swiper-slide cmex3 swiper-slide-duplicate" data-swiper-slide-index="0" role="group" aria-label="1 / 9" style="margin-right: 64px;">
+                                    <img src="images/cX04aaFkrYQ7.svg" alt="Client 01" width="110" height="21">
+                                </div><div class="swiper-slide cmex3 swiper-slide-duplicate swiper-slide-duplicate-prev" data-swiper-slide-index="1" role="group" aria-label="2 / 9" style="margin-right: 64px;">
+                                    <img src="images/QHKktrArGdmX.svg" alt="Client 02" width="70" height="25">
+                                </div><div class="swiper-slide cmex3 swiper-slide-duplicate swiper-slide-duplicate-active" data-swiper-slide-index="2" role="group" aria-label="3 / 9" style="margin-right: 64px;">
+                                    <img class="cwkk0" src="images/mmCktTAz7ChX.svg" alt="Client 03" width="107" height="33">
+                                </div><div class="swiper-slide cmex3 swiper-slide-duplicate swiper-slide-duplicate-next" data-swiper-slide-index="3" role="group" aria-label="4 / 9" style="margin-right: 64px;">
+                                    <img src="images/5nkzHgOauu46.svg" alt="Client 04" width="85" height="36">
+                                </div><div class="swiper-slide cmex3 swiper-slide-duplicate" data-swiper-slide-index="4" role="group" aria-label="5 / 9" style="margin-right: 64px;">
+                                    <img src="images/Fx3ekiB7XtBF.svg" alt="Client 05" width="86" height="18">
+                                </div><div class="swiper-slide cmex3 swiper-slide-duplicate" data-swiper-slide-index="5" role="group" aria-label="6 / 9" style="margin-right: 64px;">
+                                    <img src="images/aPiMk84VjU4I.svg" alt="Client 06" width="78" height="34">
+                                </div><div class="swiper-slide cmex3 swiper-slide-duplicate" data-swiper-slide-index="6" role="group" aria-label="7 / 9" style="margin-right: 64px;">
+                                    <img src="images/1o1079lqH5Sw.svg" alt="Client 07" width="83" height="23">
+                                </div><div class="swiper-slide cmex3 swiper-slide-duplicate" data-swiper-slide-index="7" role="group" aria-label="8 / 9" style="margin-right: 64px;">
+                                    <img src="images/T7DL471ukbfj.svg" alt="Client 08" width="98" height="26">
+                                </div><div class="swiper-slide cmex3 swiper-slide-duplicate" data-swiper-slide-index="8" role="group" aria-label="9 / 9" style="margin-right: 64px;">
+                                    <img class="chz6t" src="images/ESF0Qa7wYVut.svg" alt="Client 09" width="92" height="28">
+                                </div></div>
+                            <span class="swiper-notification" aria-live="assertive" aria-atomic="true"></span><span class="swiper-notification" aria-live="assertive" aria-atomic="true"></span><span class="swiper-notification" aria-live="assertive" aria-atomic="true"></span><span class="swiper-notification" aria-live="assertive" aria-atomic="true"></span><span class="swiper-notification" aria-live="assertive" aria-atomic="true"></span><span class="swiper-notification" aria-live="assertive" aria-atomic="true"></span><span class="swiper-notification" aria-live="assertive" aria-atomic="true"></span><span class="swiper-notification" aria-live="assertive" aria-atomic="true"></span></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Features -->
+        <section>
+            <div class="co3q6 c27r3 csm51 csya4 ccyhi" dir="rtl">
+
+                <!-- Illustration -->
+                <div class="c3sb3 c6jr6 cbvce ca5ue cwmqr cv9w8 ch67j" aria-hidden="true">
+                    <div class="c2vxt c3x17 ca5ue cl6qg ch67j">
+                        <img src="images/cGpudszhze5x.svg" class="cbdyn" width="1404" height="658" alt="Features Illustration">
+                    </div>
+                </div>
+
+                <div class="c9eon cbcs7 cifrc cc3g6">
+
+                    <div x-data="{ tab: '1' }">
+
+                        <!-- Section content -->
+                        <div class="c384i c2hl3 c4dcx c64wf cgmv7 ctxt1 cuidr cyciu c38ok cfebz csya4 c4agq">
+
+                            <!-- Content -->
+                            <div class="c2y0a cfei9 c2id4 c9j74 ciof7" dir="rtl">
+                                <!-- Content #1 -->
+                                <div>
+                                    <div class="ccqrz c6df8 ccal6 cuygr ctwez cwban ccqx1 c6wvq">شبکه اجتماعی مبتنی بر متن</div>
+                                </div>
+                                <h3 class="cc7gh ccqrz cx8zw c6df8 cfcmr ctwez c6wvq c6m3m">زمان خود را ذخیره کنید!</h3>
+                                <p class="cmuyi cbgr1 cpvtt">لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ و با استفاده از طراحان گرافیک است چاپگرها و متون بلکه روزنامه و مجله در ستون و سطرآنچنان که لازم است.</p>
+                                <div class="c07t0 ccea9 chcps cv8av">
+
+
+
+                                </div>
+                            </div>
+
+                            <!-- Image -->
+                            <div class="c4cgf c9j74">
+                                <div class="c27r3 cqdf3 cqvoe" dir="ltr">
+
+                                    <!-- Particles animation -->
+                                    <div class="ca5ue cwmqr ch67j">
+                                        <canvas data-particle-animation="" data-particle-quantity="8" data-particle-staticity="30" width="376" height="354" style="width: 382px; height: 360px;"></canvas>
+                                    </div>
+
+                                    <div class="csqqr c2sao c4agq">
+                                        <div class="csqqr c2sao c27r3 c4agq crp11 c0xl9">
+                                            <!-- Halo effect -->
+                                            <svg class="cqczd c3sb3 c2vxt czyer c3x17 cclua ca5ue cqv5f cwmqr cu3s3" width="480" height="480" viewBox="0 0 480 480" xmlns="http://www.w3.org/2000/svg">
+                                                <defs>
+                                                    <linearGradient id="pulse-a" x1="50%" x2="50%" y1="100%" y2="0%">
+                                                        <stop offset="0%" stop-color="#53F0CA"></stop>
+                                                        <stop offset="76.382%" stop-color="#1C996C"></stop>
+                                                        <stop offset="100%" stop-color="#2DB695"></stop>
+                                                    </linearGradient>
+                                                </defs>
+                                                <g fill-rule="evenodd">
+                                                    <path class="cbmx5" fill="url(#pulse-a)" fill-rule="evenodd" d="M240,0 C372.5484,0 480,107.4516 480,240 C480,372.5484 372.5484,480 240,480 C107.4516,480 0,372.5484 0,240 C0,107.4516 107.4516,0 240,0 Z M240,88.8 C156.4944,88.8 88.8,156.4944 88.8,240 C88.8,323.5056 156.4944,391.2 240,391.2 C323.5056,391.2 391.2,323.5056 391.2,240 C391.2,156.4944 323.5056,88.8 240,88.8 Z"></path>
+                                                    <path class="cubym cbmx5" fill="url(#pulse-a)" fill-rule="evenodd" d="M240,0 C372.5484,0 480,107.4516 480,240 C480,372.5484 372.5484,480 240,480 C107.4516,480 0,372.5484 0,240 C0,107.4516 107.4516,0 240,0 Z M240,88.8 C156.4944,88.8 88.8,156.4944 88.8,240 C88.8,323.5056 156.4944,391.2 240,391.2 C323.5056,391.2 391.2,323.5056 391.2,240 C391.2,156.4944 323.5056,88.8 240,88.8 Z"></path>
+                                                    <path class="chxkd cbmx5" fill="url(#pulse-a)" fill-rule="evenodd" d="M240,0 C372.5484,0 480,107.4516 480,240 C480,372.5484 372.5484,480 240,480 C107.4516,480 0,372.5484 0,240 C0,107.4516 107.4516,0 240,0 Z M240,88.8 C156.4944,88.8 88.8,156.4944 88.8,240 C88.8,323.5056 156.4944,391.2 240,391.2 C323.5056,391.2 391.2,323.5056 391.2,240 C391.2,156.4944 323.5056,88.8 240,88.8 Z"></path>
+                                                </g>
+                                            </svg>
+                                            <!-- Grid -->
+                                            <div class="cwu6b c3sb3 c2vxt czyer cbvce cdfzt czyps c3584 c3x17 cclua ca5ue cqv5f cwmqr">
+                                                <div class="c2vo5 cs79m">
+                                                    <div class="cwkka cxqwr cnq12 ca5ue cwmqr"></div>
+                                                    <div class="c1uh7 ca5ue cwmqr"></div>
+                                                    <div class="cb8y7 cxqwr cnq12 ca5ue cwmqr"></div>
+                                                    <div class="cilw6 ca5ue cwmqr"></div>
+                                                </div>
+                                            </div>
+                                            <!-- Icons -->
+                                            <div x-show="tab === '1'" x-transition:enter="cqxsj cft38 c97ew cm6k3" x-transition:enter-start="croy4 c48ms" x-transition:enter-end="c32rm ch656" x-transition:leave="cqxsj cft38 c97ew ca5ue" x-transition:leave-start="c32rm ch656" x-transition:leave-end="croy4 c52mo" class="">
+                                                <div class="c3d7q cegg3 cn2kl cy8oh cltb2 c1mpe ccqfq csqqr c2sao cck9i ctnsh c27r3 cn544 c4agq cm0fl c0ho4">
+                                                    <svg class="c0gs1 c27r3" xmlns="http://www.w3.org/2000/svg" width="23" height="25">
+                                                        <path fill-rule="nonzero" d="M10.55 15.91H.442L14.153.826 12.856 9.91h10.107L9.253 24.991l1.297-9.082Zm.702-8.919L4.963 13.91h7.893l-.703 4.918 6.289-6.918H10.55l.702-4.918Z"></path>
+                                                    </svg>
+                                                </div>
+                                            </div>
+                                            <div x-show="tab === '2'" x-transition:enter="cqxsj cft38 c97ew cm6k3" x-transition:enter-start="croy4 c48ms" x-transition:enter-end="c32rm ch656" x-transition:leave="cqxsj cft38 c97ew ca5ue" x-transition:leave-start="c32rm ch656" x-transition:leave-end="croy4 c52mo" class="" style="display: none;">
+                                                <div class="c3d7q cegg3 cn2kl cy8oh cltb2 c1mpe ccqfq csqqr c2sao cck9i ctnsh c27r3 cn544 c4agq cm0fl c0ho4">
+                                                    <svg class="c0gs1 c27r3" xmlns="http://www.w3.org/2000/svg" width="22" height="22">
+                                                        <path d="M18 14h-2V8h2c2.2 0 4-1.8 4-4s-1.8-4-4-4-4 1.8-4 4v2H8V4c0-2.2-1.8-4-4-4S0 1.8 0 4s1.8 4 4 4h2v6H4c-2.2 0-4 1.8-4 4s1.8 4 4 4 4-1.8 4-4v-2h6v2c0 2.2 1.8 4 4 4s4-1.8 4-4-1.8-4-4-4ZM16 4c0-1.1.9-2 2-2s2 .9 2 2-.9 2-2 2h-2V4ZM2 4c0-1.1.9-2 2-2s2 .9 2 2v2H4c-1.1 0-2-.9-2-2Zm4 14c0 1.1-.9 2-2 2s-2-.9-2-2 .9-2 2-2h2v2ZM8 8h6v6H8V8Zm10 12c-1.1 0-2-.9-2-2v-2h2c1.1 0 2 .9 2 2s-.9 2-2 2Z"></path>
+                                                    </svg>
+                                                </div>
+                                            </div>
+                                            <div x-show="tab === '3'" x-transition:enter="cqxsj cft38 c97ew cm6k3" x-transition:enter-start="croy4 c48ms" x-transition:enter-end="c32rm ch656" x-transition:leave="cqxsj cft38 c97ew ca5ue" x-transition:leave-start="c32rm ch656" x-transition:leave-end="croy4 c52mo" class="" style="display: none;">
+                                                <div class="c3d7q cegg3 cn2kl cy8oh cltb2 c1mpe ccqfq csqqr c2sao cck9i ctnsh c27r3 cn544 c4agq cm0fl c0ho4">
+                                                    <svg class="c0gs1 c27r3" xmlns="http://www.w3.org/2000/svg" width="26" height="14">
+                                                        <path fill-rule="nonzero" d="m10 5.414-8 8L.586 12 10 2.586l6 6 8-8L25.414 2 16 11.414z"></path>
+                                                    </svg>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- Features #2 -->
+        <section class="c27r3">
+
+            <!-- Particles animation -->
+            <div class="c2vxt c3x17 ca5ue cj7es c4cc0 cl6qg ch67j clxo2 cck8s">
+                <div class="ca5ue cwmqr ch67j" aria-hidden="true">
+                    <canvas data-particle-animation="" data-particle-quantity="6" data-particle-staticity="30" width="295" height="295" style="width: 300px; height: 300px;"></canvas>
+                </div>
+            </div>
+
+            <div class="co3q6 csm51 csya4 ccyhi">
+                <div class="cuyom cc3g6">
+
+                    <!-- Section header -->
+                    <div class="cw9su c80wd c9eon csya4 cifrc">
+                        <h2 class="cc7gh ccqrz cx8zw c6df8 cfcmr ctwez cvc1j c4zau" dir="rtl">پاکت، بهینه&zwnj;تر.</h2>
+                        <p class="cmuyi cbgr1" dir="rtl">لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ و با استفاده از طراحان گرافیک است چاپگرها و متون بلکه روزنامه و مجله در ستون و سطرآنچنان که لازم است.</p>
+                    </div>
+
+                    <!-- Highlighted boxes -->
+                    <div class="c9eon c27r3 cifrc">
+                        <!-- Blurred shape -->
+                        <div class="c3sb3 c2vxt cp4r7 c3x17 ca5ue c2s0w c7upq cjfxx" aria-hidden="true">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="434" height="427">
+                                <defs>
+                                    <linearGradient id="bs2-a" x1="19.609%" x2="50%" y1="14.544%" y2="100%">
+                                        <stop offset="0%" stop-color="#2DB695"></stop>
+                                        <stop offset="100%" stop-color="#2DB695" stop-opacity="0"></stop>
+                                    </linearGradient>
+                                </defs>
+                                <path fill="url(#bs2-a)" fill-rule="evenodd" d="m346 898 461 369-284 58z" transform="translate(-346 -898)"></path>
+                            </svg>
+                        </div>
+                        <!-- Grid -->
+                        <div class="cdt18 cvti0 cq2yg c68vp" data-highlighter="">
+                            <!-- Box #1 -->
+                            <div class="co7wv" style="--mouse-x: 679.6666564941406px; --mouse-y: 231.85713958740234px;">
+                                <div class="cp2di c08y9 cnkqm coqle c272e cdmwi c41c6 cuuka cuehh c5tlw cnna9 c8isz ct0cz c3dq6 c5aca c1mpe cjfiv cj8zu cbvce cngbt ciw4n cww36 cmy5g cco6z cfetr cmpox c260e cyayz c27r3 ck8nf c0cl2">
+                                    <div class="chrsn cbvce cs2bp c27r3 ck8nf ccxsu">
+                                        <div class="c0pfd c16ty cuidr cfebz c4agq">
+                                            <!-- Blurred shape -->
+                                            <div class="ca5ue c7upq c96me cl6qg" aria-hidden="true">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="342" height="393">
+                                                    <defs>
+                                                        <linearGradient id="bs-a" x1="19.609%" x2="50%" y1="14.544%" y2="100%">
+                                                            <stop offset="0%" stop-color="#2DB695"></stop>
+                                                            <stop offset="100%" stop-color="#2DB695" stop-opacity="0"></stop>
+                                                        </linearGradient>
+                                                    </defs>
+                                                    <path fill="url(#bs-a)" fill-rule="evenodd" d="m104 .827 461 369-284 58z" transform="translate(0 -112.827)" opacity=".7"></path>
+                                                </svg>
+                                            </div>
+                                            <!-- Radial gradient -->
+                                            <div class="c3sb3 c2vxt colir csqqr c21zy c2sao c3x17 ca5ue c2s0w ck8nf ch67j c4agq" aria-hidden="true">
+                                                <div class="c9ua1 chor7 cw2sl cdfzt cutr4 ca5ue cwmqr"></div>
+                                                <div class="chor7 cpgjj cyo6y cdfzt ca5ue chosp cgi8e"></div>
+                                            </div>
+
+
+                                            <!-- Text -->
+                                            <div class="cens0 cfei9 cl3jq cerjr ciof7 cnk07 c68q6 c95xw" dir="rtl">
+                                                <div class="crdb2">
+                                                    <div>
+                                                        <h3 class="cc7gh ccqrz cx8zw c6df8 cfcmr ctwez cwban cflos cskrr cwj8y" dir="rtl">بهینه برای زمان</h3>
+                                                        <p class="cmuyi" dir="rtl">لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ و با استفاده از طراحان گرافیک است چاپگرها و متون بلکه روزنامه و مجله در ستون و سطرآنچنان که لازم است.</p>
+                                                    </div>
+                                                </div>
+                                                <div dir="rtl">
+                                                    <a class="c3d7q c272e cegg3 c8isz c0z2s c1mpe ccqfq cit3o cx3jz cgi3a cqxsj c27r3 cfl4k cq2yg" href="#0">
+                                                        <span class="c2sao cwban c27r3">بیشتر بخوانید</span>
+                                                    </a>
+                                                </div>
+                                            </div>
+                                            <!-- Image -->
+                                            <div class="cbvce cx14a c27r3 ca0gw cbc5q">
+                                                <img class="c2vxt ccau4 c1jg2 cbdyn ciu5f c3x17 ca5ue c2s0w csya4" src="images/yd3FiG5o50yN.png" width="504" height="400" alt="Feature 01">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Box #2 -->
+                            <div class="cjp51" style="--mouse-x: 679.6666564941406px; --mouse-y: -192.63494873046875px;">
+                                <div class="cp2di c08y9 cnkqm coqle c272e cdmwi c41c6 cuuka cuehh c5tlw cnna9 c8isz ct0cz c3dq6 c5aca c1mpe cjfiv cj8zu cbvce cngbt ciw4n cww36 cmy5g cco6z cfetr cmpox c260e cyayz c27r3 ck8nf c0cl2">
+                                    <div class="chrsn cbvce cs2bp c27r3 ck8nf ccxsu">
+                                        <div class="cfebz c4agq" dir="rtl">
+                                            <!-- Radial gradient -->
+                                            <div class="c3sb3 c2vxt colir c21zy c3x17 ca5ue c2s0w c02j2 ch67j" aria-hidden="true">
+                                                <div class="chor7 cal1k cdfzt cmy5g ca5ue cwmqr"></div>
+                                            </div>
+                                            <!-- Text -->
+                                            <div class="cens0 cfei9 cl3jq ciof7 cnk07 c68q6 c95xw">
+                                                <div>
+                                                    <h3 class="cc7gh ccqrz cx8zw c6df8 cfcmr ctwez cwban cflos cskrr cwj8y">دسترسی پذیری</h3>
+                                                    <p class="cmuyi">لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ و با استفاده از طراحان گرافیک است.</p>
+                                                </div>
+                                            </div>
+                                            <!-- Image -->
+                                            <div class="cbvce cx14a c27r3 c9c67 ca0gw cbc5q">
+                                                <img class="c2vxt ccau4 csrg2 c1jg2 cbdyn ciu5f c3x17 ca5ue c2s0w csya4" src="images/mwcCuYACJx38.png" width="536" height="230" alt="Feature 02">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Box #3 -->
+                            <div class="ckb7e" style="--mouse-x: 62.7935791015625px; --mouse-y: -192.63494873046875px;">
+                                <div class="cp2di c08y9 cnkqm coqle c272e cdmwi c41c6 cuuka cuehh c5tlw cnna9 c8isz ct0cz c3dq6 c5aca c1mpe cjfiv cj8zu cbvce cngbt ciw4n cww36 cmy5g cco6z cfetr cmpox c260e cyayz c27r3 ck8nf c0cl2">
+                                    <div class="chrsn cbvce cs2bp c27r3 ck8nf ccxsu" dir="rtl">
+                                        <div class="cfebz c4agq">
+                                            <!-- Radial gradient -->
+                                            <div class="c3sb3 c2vxt colir c21zy c3x17 ca5ue c2s0w c02j2 ch67j" aria-hidden="true">
+                                                <div class="chor7 cal1k cdfzt cmy5g ca5ue cwmqr"></div>
+                                            </div>
+                                            <!-- Text -->
+                                            <div class="cens0 cfei9 cl3jq ciof7 cnk07 c68q6 c95xw">
+                                                <div>
+                                                    <h3 class="cc7gh ccqrz cx8zw c6df8 cfcmr ctwez cwban cflos cskrr cwj8y">تنوع اشتراک</h3>
+                                                    <p class="cmuyi">لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ و با استفاده از طراحان گرافیک است.</p>
+                                                </div>
+                                            </div>
+                                            <!-- Image -->
+                                            <div class="cbvce cx14a c27r3 c9c67 ca0gw cbc5q">
+                                                <img class="c2vxt ccau4 csrg2 c1jg2 cbdyn ciu5f c3x17 ca5ue c2s0w csya4" src="images/ouVKUItzYM3y.png" width="230" height="230" alt="Feature 03">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+
+
+                </div>
+            </div>
+        </section>
+
+        <!-- Features #3 -->
+        <section class="c27r3">
+
+            <!-- Blurred shape -->
+            <div class="c3sb3 c2vxt c9u35 cp4r7 c3x17 ca5ue c7upq cl6qg ch67j" aria-hidden="true">
+                <svg xmlns="http://www.w3.org/2000/svg" width="434" height="427">
+                    <defs>
+                        <linearGradient id="bs3-a" x1="19.609%" x2="50%" y1="14.544%" y2="100%">
+                            <stop offset="0%" stop-color="#2DB695"></stop>
+                            <stop offset="100%" stop-color="#2DB695" stop-opacity="0"></stop>
+                        </linearGradient>
+                    </defs>
+                    <path fill="url(#bs3-a)" fill-rule="evenodd" d="m410 0 461 369-284 58z" transform="matrix(1 0 0 -1 -410 427)"></path>
+                </svg>
+            </div>
+
+            <div class="co3q6 csm51 csya4 ccyhi">
+                <div class="czyxl c9eon cuyom ckbs2 cifrc cc3g6">
+
+                    <!-- Section header -->
+                    <div class="cw9su c80wd c9eon csya4 cifrc" dir="rtl">
+                        <h2 class="cc7gh ccqrz cx8zw c6df8 cfcmr ctwez cvc1j c4zau">فراتر از یک اپلیکیشن</h2>
+                        <p class="cmuyi cbgr1">لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ و با استفاده از طراحان گرافیک است چاپگرها و متون بلکه روزنامه و مجله در ستون و سطرآنچنان که لازم است.</p>
+                    </div>
+
+                    <div class="c80wd csya4">
+                        <div class="">
+                            <div class="cq2yg" data-highlighter="">
+                                <div class="cp2di c08y9 cnkqm coqle c272e cdmwi c41c6 cuuka cuehh c5tlw cnna9 c8isz ct0cz c3dq6 c5aca c1mpe cjfiv cj8zu cbvce cngbt ciw4n cww36 cmy5g cco6z cfetr cmpox c260e cyayz c27r3 c0cl2">
+                                    <div class="chrsn cbvce cs2bp c27r3 ck8nf ccxsu">
+                                        <!-- Radial gradient -->
+                                        <div class="c3sb3 c2vxt colir c21zy c3x17 ca5ue c2s0w c02j2 ch67j" aria-hidden="true">
+                                            <div class="c9ua1 chor7 cw2sl cdfzt ca5ue cwmqr"></div>
+                                        </div>
+                                        <img src="images/p5HmbQ6n0t6h.png" width="768" height="400" alt="Feature 04">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- Testimonials carousel -->
+        <section>
+            <div class="co3q6 csm51 csya4 ccyhi">
+                <div class="cazcv cbluc">
+
+                    <!-- Section header -->
+                    <div class="cw9su c80wd c9eon csya4 cifrc" dir="rtl">
+                        <div>
+                            <div class="ccqrz c6df8 ccal6 cuygr ctwez cwban ccqx1 c6wvq">انتخاب شما</div>
+                        </div>
+                        <h2 class="cc7gh ccqrz cx8zw c6df8 cfcmr ctwez cvc1j c4zau">نیاز خود را برآورده کنید</h2>
+                        <p class="cmuyi cbgr1">لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ و با استفاده از طراحان گرافیک است چاپگرها و متون بلکه روزنامه و مجله در ستون و سطرآنچنان که لازم است.</p>
+                    </div>
+
+                    <!-- Carousel built with Swiper.js [https://swiperjs.com/] -->
+                    <!-- * Initialized in src/js/YxCp7BHO4ZYI.js -->
+                    <!-- * Custom styles in src/css/additional-styles/theme.scss -->
+                    <div class="cv05a cylw7 csfv2 ctxpg cz1fi cr8xw cq1o6 cfvvn c1mpe ccqfq clxx2 ciw4n cww36 cs2p7 cbby6 c7lkj c27r3">
+                        <div class="stellar-carousel swiper-container cq2yg swiper-initialized swiper-horizontal swiper-pointer-events swiper-backface-hidden swiper-android">
+                            <div class="swiper-wrapper cxlce" data-highlighter="" id="swiper-wrapper-495dabcd598ee63a" aria-live="polite" style="cursor: grabbing; transform: translate3d(-1624px, 0px, 0px); transition-duration: 0ms;">
+                                <!-- Carousel items -->
+                                <div class="swiper-slide cp2di c08y9 cnkqm coqle c272e cdmwi c41c6 cuuka cuehh c5tlw cnna9 c8isz ct0cz c3dq6 c5aca c1mpe cjfiv cj8zu cbvce cngbt ciw4n cww36 cmy5g cco6z cfetr cmpox cpbdd c260e cyayz c27r3 cw4pt c0cl2" role="group" aria-label="1 / 5" style="width: 382px; --mouse-x: 1737.6666870117188px; --mouse-y: 3.460296630859375px; margin-right: 24px;">
+                                    <div class="chrsn cbvce cs2bp c27r3 ck8nf ccxsu">
+                                        <!-- Particles animation -->
+                                        <div class="c4iwi cxnjs ch063 cwc7v cgi3a croy4 ca5ue cwmqr ch67j" aria-hidden="true">
+                                            <canvas data-particle-animation="" data-particle-quantity="3" width="210" height="237" style="width: 214px; height: 241px;"></canvas>
+                                        </div>
+                                        <!-- Radial gradient -->
+                                        <div class="c3sb3 c2vxt colir c21zy c3x17 ca5ue c2s0w cbbau ch67j" aria-hidden="true">
+                                            <div class="c9fo8 cqp3k chor7 c283n cdfzt cmy5g cwc7v cgi3a ca5ue cwmqr"></div>
+                                        </div>
+                                        <div class="cfebz ck8nf c4agq c95xw" dir="rtl">
+                                            <img class="c9eco" src="images/NuPPnccwV5aR.svg" width="56" height="56" alt="Icon 01">
+                                            <div class="c9wgl">
+                                                <div class="cflos cbgr1 c986a">Anonymous User</div>
+                                                <div class="cmuyi c9eco">Incorporate rich user profiling, and facilitate more transactions.</div>
+                                            </div>
+                                            <div class="cnldq">
+                                                <a class="c0z2s cit3o c2sao cx3jz cwban ccqx1 cgi3a cqxsj cvdvu cq2yg" href="#0">Learn More </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="swiper-slide cp2di c08y9 cnkqm coqle c272e cdmwi c41c6 cuuka cuehh c5tlw cnna9 c8isz ct0cz c3dq6 c5aca c1mpe cjfiv cj8zu cbvce cngbt ciw4n cww36 cmy5g cco6z cfetr cmpox cpbdd c260e cyayz c27r3 cw4pt c0cl2" role="group" aria-label="2 / 5" style="width: 382px; --mouse-x: 1384.6666717529297px; --mouse-y: 3.460296630859375px; margin-right: 24px;">
+                                    <div class="chrsn cbvce cs2bp c27r3 ck8nf ccxsu">
+                                        <!-- Particles animation -->
+                                        <div class="c4iwi cxnjs ch063 cwc7v cgi3a croy4 ca5ue cwmqr ch67j" aria-hidden="true">
+                                            <canvas data-particle-animation="" data-particle-quantity="3" width="210" height="237" style="width: 214px; height: 241px;"></canvas>
+                                        </div>
+                                        <!-- Radial gradient -->
+                                        <div class="c3sb3 c2vxt colir c21zy c3x17 ca5ue c2s0w cbbau ch67j" aria-hidden="true">
+                                            <div class="c9fo8 cqp3k chor7 c283n cdfzt cmy5g cwc7v cgi3a ca5ue cwmqr"></div>
+                                        </div>
+                                        <div class="cfebz ck8nf c4agq c95xw" dir="rtl">
+                                            <img class="c9eco" src="images/JZQ2aHbb2R9o.svg" width="56" height="56" alt="Icon 01">
+                                            <div class="c9wgl">
+                                                <div class="cflos cbgr1 c986a">Bot Detection</div>
+                                                <div class="cmuyi c9eco">Incorporate rich user profiling, and facilitate more transactions.</div>
+                                            </div>
+                                            <div class="cnldq">
+                                                <a class="c0z2s cit3o c2sao cx3jz cwban ccqx1 cgi3a cqxsj cvdvu cq2yg" href="#0">Learn More </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="swiper-slide cp2di c08y9 cnkqm coqle c272e cdmwi c41c6 cuuka cuehh c5tlw cnna9 c8isz ct0cz c3dq6 c5aca c1mpe cjfiv cj8zu cbvce cngbt ciw4n cww36 cmy5g cco6z cfetr cmpox cpbdd c260e cyayz c27r3 cw4pt c0cl2" role="group" aria-label="3 / 5" style="width: 382px; --mouse-x: 1031.6666564941406px; --mouse-y: 3.460296630859375px; margin-right: 24px;">
+                                    <div class="chrsn cbvce cs2bp c27r3 ck8nf ccxsu">
+                                        <!-- Particles animation -->
+                                        <div class="c4iwi cxnjs ch063 cwc7v cgi3a croy4 ca5ue cwmqr ch67j" aria-hidden="true">
+                                            <canvas data-particle-animation="" data-particle-quantity="3" width="210" height="237" style="width: 214px; height: 241px;"></canvas>
+                                        </div>
+                                        <!-- Radial gradient -->
+                                        <div class="c3sb3 c2vxt colir c21zy c3x17 ca5ue c2s0w cbbau ch67j" aria-hidden="true">
+                                            <div class="c9fo8 cqp3k chor7 c283n cdfzt cmy5g cwc7v cgi3a ca5ue cwmqr"></div>
+                                        </div>
+                                        <div class="cfebz ck8nf c4agq c95xw" dir="rtl">
+                                            <img class="c9eco" src="images/VsrdJJporGMp.svg" width="56" height="56" alt="Icon 01">
+                                            <div class="c9wgl">
+                                                <div class="cflos cbgr1 c986a">Social integrations</div>
+                                                <div class="cmuyi c9eco">Incorporate rich user profiling, and facilitate more transactions.</div>
+                                            </div>
+                                            <div class="cnldq">
+                                                <a class="c0z2s cit3o c2sao cx3jz cwban ccqx1 cgi3a cqxsj cvdvu cq2yg" href="#0">Learn More </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="swiper-slide cp2di c08y9 cnkqm coqle c272e cdmwi c41c6 cuuka cuehh c5tlw cnna9 c8isz ct0cz c3dq6 c5aca c1mpe cjfiv cj8zu cbvce cngbt ciw4n cww36 cmy5g cco6z cfetr cmpox cpbdd c260e cyayz c27r3 cw4pt c0cl2 swiper-slide-prev" role="group" aria-label="4 / 5" style="width: 382px; --mouse-x: 678.6666259765625px; --mouse-y: 3.460296630859375px; margin-right: 24px;">
+                                    <div class="chrsn cbvce cs2bp c27r3 ck8nf ccxsu">
+                                        <!-- Particles animation -->
+                                        <div class="c4iwi cxnjs ch063 cwc7v cgi3a croy4 ca5ue cwmqr ch67j" aria-hidden="true">
+                                            <canvas data-particle-animation="" data-particle-quantity="3" width="210" height="237" style="width: 214px; height: 241px;"></canvas>
+                                        </div>
+                                        <!-- Radial gradient -->
+                                        <div class="c3sb3 c2vxt colir c21zy c3x17 ca5ue c2s0w cbbau ch67j" aria-hidden="true">
+                                            <div class="c9fo8 cqp3k chor7 c283n cdfzt cmy5g cwc7v cgi3a ca5ue cwmqr"></div>
+                                        </div>
+                                        <div class="cfebz ck8nf c4agq c95xw" dir="rtl">
+                                            <img class="c9eco" src="images/JTG1mJnZtWAJ.svg" width="56" height="56" alt="Icon 01">
+                                            <div class="c9wgl">
+                                                <div class="cflos cbgr1 c986a">Progressive Profiling</div>
+                                                <div class="cmuyi c9eco">Incorporate rich user profiling, and facilitate more transactions.</div>
+                                            </div>
+                                            <div class="cnldq">
+                                                <a class="c0z2s cit3o c2sao cx3jz cwban ccqx1 cgi3a cqxsj cvdvu cq2yg" href="#0">Learn More </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="swiper-slide cp2di c08y9 cnkqm coqle c272e cdmwi c41c6 cuuka cuehh c5tlw cnna9 c8isz ct0cz c3dq6 c5aca c1mpe cjfiv cj8zu cbvce cngbt ciw4n cww36 cmy5g cco6z cfetr cmpox cpbdd c260e cyayz c27r3 cw4pt c0cl2 swiper-slide-active" role="group" aria-label="5 / 5" style="width: 382px; --mouse-x: 325.6666259765625px; --mouse-y: 3.460296630859375px; margin-right: 24px;">
+                                    <div class="chrsn cbvce cs2bp c27r3 ck8nf ccxsu">
+                                        <!-- Particles animation -->
+                                        <div class="c4iwi cxnjs ch063 cwc7v cgi3a croy4 ca5ue cwmqr ch67j" aria-hidden="true">
+                                            <canvas data-particle-animation="" data-particle-quantity="3" width="210" height="237" style="width: 214px; height: 241px;"></canvas>
+                                        </div>
+                                        <!-- Radial gradient -->
+                                        <div class="c3sb3 c2vxt colir c21zy c3x17 ca5ue c2s0w cbbau ch67j" aria-hidden="true">
+                                            <div class="c9fo8 cqp3k chor7 c283n cdfzt cmy5g cwc7v cgi3a ca5ue cwmqr"></div>
+                                        </div>
+                                        <div class="cfebz ck8nf c4agq c95xw" dir="rtl">
+                                            <img class="c9eco" src="images/NUc4TdiFv2DE.svg" width="56" height="56" alt="Icon 05">
+                                            <div class="c9wgl">
+                                                <div class="cflos cbgr1 c986a">Secure Access</div>
+                                                <div class="cmuyi c9eco">Incorporate rich user profiling, and facilitate more transactions.</div>
+                                            </div>
+                                            <div class="cnldq">
+                                                <a class="c0z2s cit3o c2sao cx3jz cwban ccqx1 cgi3a cqxsj cvdvu cq2yg" href="#0">Learn More </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <span class="swiper-notification" aria-live="assertive" aria-atomic="true"></span><span class="swiper-notification" aria-live="assertive" aria-atomic="true"></span><span class="swiper-notification" aria-live="assertive" aria-atomic="true"></span><span class="swiper-notification" aria-live="assertive" aria-atomic="true"></span><span class="swiper-notification" aria-live="assertive" aria-atomic="true"></span><span class="swiper-notification" aria-live="assertive" aria-atomic="true"></span><span class="swiper-notification" aria-live="assertive" aria-atomic="true"></span><span class="swiper-notification" aria-live="assertive" aria-atomic="true"></span></div>
+                    </div>
+
+                    <!-- Arrows -->
+                    <div class="cq21c cv8av c4agq">
+                        <button class="carousel-prev csqqr c2sao c27r3 cq2yg ccxsu c4agq ca8e1 cyddt" tabindex="0" aria-label="Previous slide" aria-controls="swiper-wrapper-495dabcd598ee63a" aria-disabled="false">
+                            <span class="cmmna">Previous</span>
+                            <svg class="ctnqo colnz cx3jz cgi3a cqxsj cbhpb cpy4b" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M6.7 14.7l1.4-1.4L3.8 9H16V7H3.8l4.3-4.3-1.4-1.4L0 8z"></path>
+                            </svg>
+                        </button>
+                        <button class="carousel-next csqqr c2sao c27r3 cq2yg ccxsu c4agq ca8e1 cyddt swiper-button-disabled" tabindex="-1" aria-label="Next slide" aria-controls="swiper-wrapper-495dabcd598ee63a" aria-disabled="true" disabled="">
+                            <span class="cmmna">Next</span>
+                            <svg class="ctnqo colnz cx3jz cgi3a cqxsj cbhpb cpy4b" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M9.3 14.7l-1.4-1.4L12.2 9H0V7h12.2L7.9 2.7l1.4-1.4L16 8z"></path>
+                            </svg>
+                        </button>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- Features #4 -->
+        <section class="c27r3">
+            <div class="co3q6 c27r3 csm51 csya4 ccyhi" dir="rtl">
+
+                <!-- Blurred shape -->
+                <div class="c3sb3 cutr4 ca5ue c7upq c1tcw ca7f1 c4cc0 cl6qg ch67j" aria-hidden="true">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="434" height="427">
+                        <defs>
+                            <linearGradient id="bs4-a" x1="19.609%" x2="50%" y1="14.544%" y2="100%">
+                                <stop offset="0%" stop-color="#4BEED0"></stop>
+                                <stop offset="100%" stop-color="2DAEB6" stop-opacity="0"></stop>
+                            </linearGradient>
+                        </defs>
+                        <path fill="url(#bs4-a)" fill-rule="evenodd" d="m0 0 461 369-284 58z" transform="matrix(1 0 0 -1 0 427)"></path>
+                    </svg>
+                </div>
+
+                <div class="c9eon cuyom cifrc cc3g6">
+
+                    <!-- Section header -->
+                    <div class="c80wd c9eon cifrc">
+                        <h2 class="cc7gh ccqrz cx8zw c6df8 cfcmr ctwez cvc1j c4zau">چرا پاکت؟</h2>
+                        <p class="cmuyi cbgr1">لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ و با استفاده از طراحان گرافیک است چاپگرها و متون بلکه روزنامه و مجله در ستون و سطرآنچنان که لازم است.</p>
+                    </div>
+
+                    <!-- Rows -->
+                    <div class="c4v5t c7ve6">
+                        <!-- Row -->
+                        <div class="cvp6k cvdsa cjyiu">
+                            <div>
+                                <div class="ccqrz c6df8 ccal6 cuygr ctwez cwban ccqx1 cbwn8">تنوع محتوا</div>
+                            </div>
+                            <div class="ctnuh c1fis cb684 cawjf c68vp">
+                                <!-- Feature -->
+                                <div>
+                                    <div class="c2sao csip8 c986a c4agq">
+                                        <svg class="c6ek1 cl3jq" xmlns="http://www.w3.org/2000/svg" width="16" height="16">
+                                            <path d="M13 16c-.153 0-.306-.035-.447-.105l-3.851-1.926c-.231.02-.465.031-.702.031-4.411 0-8-3.14-8-7s3.589-7 8-7 8 3.14 8 7c0 1.723-.707 3.351-2 4.63V15a1.003 1.003 0 0 1-1 1Zm-4.108-4.054c.155 0 .308.036.447.105L12 13.382v-2.187c0-.288.125-.562.341-.752C13.411 9.506 14 8.284 14 7c0-2.757-2.691-5-6-5S2 4.243 2 7s2.691 5 6 5c.266 0 .526-.02.783-.048a1.01 1.01 0 0 1 .109-.006Z"></path>
+                                        </svg>
+                                        <h4 class="c8azi ccqx1">&zwnj; &zwnj; &zwnj;ویژگی اول</h4>
+                                    </div>
+                                    <p class="cmuyi cvdvu">لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ و با استفاده از طراحان گرافیک است.</p>
+                                </div>
+                                <!-- Feature -->
+                                <div>
+                                    <div class="c2sao csip8 c986a c4agq">
+                                        <svg class="c6ek1 cl3jq" xmlns="http://www.w3.org/2000/svg" width="16" height="16">
+                                            <path d="M15 9a3.841 3.841 0 0 0-2.661 1.545A2.524 2.524 0 0 0 10 9a1 1 0 1 0 0 2c.361 0 .57.279.89 1.284C10.243 13.08 9.441 14 9 14a1 1 0 0 0 0 2 3.841 3.841 0 0 0 2.661-1.545A2.524 2.524 0 0 0 14 16a1 1 0 0 0 0-2c-.361 0-.571-.279-.89-1.284C13.757 11.92 14.559 11 15 11a1 1 0 0 0 0-2Z"></path><path d="M10 8a1 1 0 0 0 0-2H7.825c.432-2.421.983-4 2.175-4a1 1 0 0 1 1 1 1 1 0 0 0 2 0 3 3 0 0 0-3-3C7.193 0 6.313 2.9 5.793 6H3a1 1 0 1 0 0 2h2.49c-.506 3.52-1 6-2.49 6a1 1 0 0 1-1-1 1 1 0 0 0-2 0 3 3 0 0 0 3 3c3.367 0 3.964-4.175 4.49-7.858L7.51 8H10Z"></path>
+                                        </svg>
+                                        <h4 class="c8azi ccqx1">&zwnj; &zwnj; &zwnj;ویژگی دوم</h4>
+                                    </div>
+                                    <p class="cmuyi cvdvu">لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ و با استفاده از طراحان گرافیک است.</p>
+                                </div>
+                                <!-- Feature -->
+                                <div>
+                                    <div class="c2sao csip8 c986a c4agq">
+                                        <svg class="c6ek1 cl3jq" xmlns="http://www.w3.org/2000/svg" width="16" height="16">
+                                            <path d="M7 14c-3.86 0-7-3.14-7-7s3.14-7 7-7 7 3.14 7 7-3.14 7-7 7ZM7 2C4.243 2 2 4.243 2 7s2.243 5 5 5 5-2.243 5-5-2.243-5-5-5ZM15.707 14.293 13.314 11.9a8.019 8.019 0 0 1-1.414 1.414l2.393 2.393a.997.997 0 0 0 1.414 0 .999.999 0 0 0 0-1.414Z"></path>
+                                        </svg>
+                                        <h4 class="c8azi ccqx1">&zwnj; &zwnj; &zwnj;ویژگی سوم</h4>
+                                    </div>
+                                    <p class="cmuyi cvdvu">لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ و با استفاده از طراحان گرافیک است.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Row -->
+                        <div class="cjyiu">
+                            <div>
+                                <div class="ccqrz c6df8 ccal6 cuygr ctwez cwban ccqx1 cbwn8">هوش مصنوعی</div>
+                            </div>
+                            <div class="ctnuh c1fis cb684 cawjf c68vp">
+                                <!-- Feature -->
+                                <div>
+                                    <div class="c2sao csip8 c986a c4agq">
+                                        <svg class="c6ek1 cl3jq" xmlns="http://www.w3.org/2000/svg" width="16" height="16">
+                                            <path d="M2 6H0V2a2 2 0 0 1 2-2h4v2H2v4ZM16 6h-2V2h-4V0h4a2 2 0 0 1 2 2v4ZM14 16h-4v-2h4v-4h2v4a2 2 0 0 1-2 2ZM6 16H2a2 2 0 0 1-2-2v-4h2v4h4v2Z"></path>
+                                        </svg>
+                                        <h4 class="c8azi ccqx1">&zwnj; &zwnj; &zwnj;ویژگی اول</h4>
+                                    </div>
+                                    <p class="cmuyi cvdvu">لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ و با استفاده از طراحان گرافیک است.</p>
+                                </div>
+                                <!-- Feature -->
+                                <div>
+                                    <div class="c2sao csip8 c986a c4agq">
+                                        <svg class="c6ek1 cl3jq" xmlns="http://www.w3.org/2000/svg" width="16" height="16">
+                                            <path d="M6.974 14c-.3 0-.7-.2-.9-.5l-2.2-3.7-2.1 2.8c-.3.4-1 .5-1.4.2-.4-.3-.5-1-.2-1.4l3-4c.2-.3.5-.4.9-.4.3 0 .6.2.8.5l2 3.3 3.3-8.1c0-.4.4-.7.8-.7s.8.2.9.6l4 8c.2.5 0 1.1-.4 1.3-.5.2-1.1 0-1.3-.4l-3-6-3.2 7.9c-.2.4-.6.6-1 .6Z"></path>
+                                        </svg>
+                                        <h4 class="c8azi ccqx1">&zwnj; &zwnj; &zwnj;ویژگی دوم</h4>
+                                    </div>
+                                    <p class="cmuyi cvdvu">لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ و با استفاده از طراحان گرافیک است.</p>
+                                </div>
+                                <!-- Feature -->
+                                <div>
+                                    <div class="c2sao csip8 c986a c4agq">
+                                        <svg class="c6ek1 cl3jq" xmlns="http://www.w3.org/2000/svg" width="16" height="16">
+                                            <path d="M14 0H2c-.6 0-1 .4-1 1v14c0 .6.4 1 1 1h8l5-5V1c0-.6-.4-1-1-1ZM3 2h10v8H9v4H3V2Z"></path>
+                                        </svg>
+                                        <h4 class="c8azi ccqx1">&zwnj; &zwnj; &zwnj;ویژگی سوم</h4>
+                                    </div>
+                                    <p class="cmuyi cvdvu">لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ و با استفاده از طراحان گرافیک است.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Row -->
+                        <div class="cjyiu">
+                            <div>
+                                <div class="ccqrz c6df8 ccal6 cuygr ctwez cwban ccqx1 cbwn8">دسترسی پذیری</div>
+                            </div>
+                            <div class="ctnuh c1fis cb684 cawjf c68vp">
+                                <!-- Feature -->
+                                <div>
+                                    <div class="c2sao csip8 c986a c4agq">
+                                        <svg class="c6ek1 cl3jq" xmlns="http://www.w3.org/2000/svg" width="16" height="16">
+                                            <path d="M15.5 11H13a5.022 5.022 0 0 1-3.453-1.4l-1.2 1.607A7.065 7.065 0 0 0 12 12.92v1.586a.5.5 0 0 0 .853.349l3-3A.5.5 0 0 0 15.5 11ZM1 5a5.022 5.022 0 0 1 3.453 1.4l1.205-1.61A7.028 7.028 0 0 0 1 3a1 1 0 1 0 0 2ZM13 5h2.5a.5.5 0 0 0 .354-.853l-3-3A.5.5 0 0 0 12 1.5v1.58a7.032 7.032 0 0 0-4.6 2.72L5 9a5.025 5.025 0 0 1-4 2 1 1 0 0 0 0 2 7.034 7.034 0 0 0 5.6-2.8L9 7a5.025 5.025 0 0 1 4-2Z"></path>
+                                        </svg>
+                                        <h4 class="c8azi ccqx1">&zwnj; &zwnj; &zwnj;ویژگی اول</h4>
+                                    </div>
+                                    <p class="cmuyi cvdvu">لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ و با استفاده از طراحان گرافیک است.</p>
+                                </div>
+                                <!-- Feature -->
+                                <div>
+                                    <div class="c2sao csip8 c986a c4agq">
+                                        <svg class="c6ek1 cl3jq" xmlns="http://www.w3.org/2000/svg" width="16" height="16">
+                                            <path d="M14 14H2a1 1 0 0 0 0 2h12a1 1 0 0 0 0-2ZM7.293 11.707a1 1 0 0 0 1.414 0l5-5a1 1 0 1 0-1.414-1.414L9 8.586V1a1 1 0 1 0-2 0v7.586L3.707 5.293a1 1 0 0 0-1.414 1.414l5 5Z"></path>
+                                        </svg>
+                                        <h4 class="c8azi ccqx1">&zwnj; &zwnj; &zwnj;ویژگی دوم</h4>
+                                    </div>
+                                    <p class="cmuyi cvdvu">لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ و با استفاده از طراحان گرافیک است.</p>
+                                </div>
+                                <!-- Feature -->
+                                <div>
+                                    <div class="c2sao csip8 c986a c4agq">
+                                        <svg class="c6ek1 cl3jq" xmlns="http://www.w3.org/2000/svg" width="16" height="16">
+                                            <path d="M14.6.085 8 2.885 1.4.085c-.5-.2-1.4-.1-1.4.9v11c0 .4.2.8.6.9l7 3c.3.1.5.1.8 0l7-3c.4-.2.6-.5.6-.9v-11c0-1-.9-1.1-1.4-.9ZM2 2.485l5 2.1v8.8l-5-2.1v-8.8Zm12 8.8-5 2.1v-8.7l5-2.1v8.7Z"></path>
+                                        </svg>
+                                        <h4 class="c8azi ccqx1">&zwnj; &zwnj; &zwnj;ویژگی سوم</h4>
+                                    </div>
+                                    <p class="cmuyi cvdvu">لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ و با استفاده از طراحان گرافیک است.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- Pricing -->
+
+
+        <!-- Testimonials -->
+        <section>
+            <div class="c80wd csm51 csya4 ccyhi">
+                
+            </div>
+        </section>
+
+        <!-- CTA -->
+        <section>
+            <div class="co3q6 csm51 csya4 ccyhi" dir="rtl">
+                <div class="cx569 cbvce cuwj8 c27r3 cx3i6 cujph">
+                    <!-- Radial gradient -->
+                    <div class="c3sb3 c2vxt czyer csqqr c21zy c2sao c3x17 ca5ue cbbau cl6qg ch67j c4agq" aria-hidden="true">
+                        <div class="c9ua1 chor7 cw2sl cdfzt cutr4 ca5ue cwmqr"></div>
+                        <div class="chor7 cpgjj cyo6y cdfzt ca5ue chosp cgi8e"></div>
+                    </div>
+                    <!-- Blurred shape -->
+                    <div class="c3sb3 colir cp4r7 ca5ue c2s0w c7upq c1tcw ch67j" aria-hidden="true">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="434" height="427">
+                            <defs>
+                                <linearGradient id="bs5-a" x1="19.609%" x2="50%" y1="14.544%" y2="100%">
+                                    <stop offset="0%" stop-color="#4BEED0"></stop>
+                                    <stop offset="100%" stop-color="#2DB695" stop-opacity="0"></stop>
+                                </linearGradient>
+                            </defs>
+                            <path fill="url(#bs5-a)" fill-rule="evenodd" d="m0 0 461 369-284 58z" transform="matrix(1 0 0 -1 0 427)"></path>
+                        </svg>
+                    </div>
+                    <!-- Content -->
+                    <div class="cw9su c80wd csya4">
+                        <div>
+                            <div class="ccqrz c6df8 ccal6 cuygr ctwez cwban ccqx1 c6wvq">همین حالا دریافت کنید</div>
+                        </div>
+                        <h2 class="cc7gh ccqrz cx8zw c6df8 cfcmr ctwez cvc1j c4zau">اپلیکیشن پاکت</h2>
+                        <p class="cmuyi cbgr1 cpvtt">لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ و با استفاده از طراحان گرافیک است چاپگرها و متون بلکه روزنامه و مجله در ستون و سطرآنچنان که لازم است.</p>
+                        <div>
+                            <a class="ccqrz cl7hu colil csdcv cpy2n cx3jz cgi3a cqxsj cdccy cq2yg cyijk" href="#0">دریافت کنید</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
 </div>
 
-<div class="overlay" id="overlay">
-  <div class="overlay-content">
-    <h1>Furiosa 2024</h1>
-    <p>2h 28m</p>
-    <p>Anya Taylor-Joy, Chris Hemsworth, Tom Burke</p>
-  </div>
-</div>
-
-<div class="video-container">
-  <media-player
-    id="mediaPlayer"
-    title="Dune 2"
-    src="https://s43.namasha.com/videos/dl/7466912361-720p/%D8%A8%D9%87%D8%AA%D8%B1%DB%8C%D9%86-%D9%84%D9%BE-%D8%AA%D8%A7%D9%BE-%D9%87%D8%A7%DB%8C-20-%D8%AA%D8%A7-30-%D9%85%DB%8C%D9%84%DB%8C%D9%88%D9%86-%D8%AA%D9%88%D9%85%D8%A7%D9%86-720p.mp4"
-    poster="./poster/dune2.webp"
-    aspect-ratio="16/9"
-    crossorigin
-    playsinline
-  >
-    <media-outlet>
-      <media-poster
-        alt="Dune 2"
-      ></media-poster>
-      <track
-        src="./subs/dune2.vtt"
-        label="Persian"
-        srclang="fa"
-        kind="subtitles"
-        default
-      />
-      <track
-        src="https://media-files.vidstack.io/sprite-fight/subs/english.vtt"
-        label="English"
-        srclang="en-US"
-        kind="subtitles"
-      />
-    </media-outlet>
-    <media-community-skin></media-community-skin>
-    <img src="img/watermark.png" alt="Watermark" class="watermark" id="watermark">
-    <img src="img/wifi.png" alt="No Internet" class="wifi-icon" id="wifiIcon">
-    <div class="skip-intro-btn" id="skipIntroBtn">
-      <img src="img/skip.png" alt="Skip Intro">
-    </div>      
-    <!-- <div class="skip-intro-btn" id="skipIntroBtn">رد کردن تیتراژ</div> -->
-  </media-player>
-</div>
-
+<script src="js/4vDv9b2so9dk.js" defer=""></script>
+<script src="js/hDV4zsnluPZK.js"></script>
+<script src="js/ZFFwelt1HaZR.js"></script>
+<script src="js/YxCp7BHO4ZYI.js"></script>
+    <script>
+        document.addEventListener('contextmenu', function(e) {
+            e.preventDefault();
+        });
+        
+        
+        // document.addEventListener('keydown', function(e) {
+        //     if (e.key === 'F12' || (e.ctrlKey && e.shiftKey && e.key === 'I') || (e.ctrlKey && e.shiftKey && e.key === 'C') || (e.ctrlKey && e.shiftKey && e.key === 'J')) {
+        //     e.preventDefault();
+        //     }
+        // });
+        
+        
+        document.addEventListener('keydown', function(e) {
+            if (e.ctrlKey && e.shiftKey && e.key === 'i') {
+            e.preventDefault();
+            }
+        });
+        
+        
+        document.addEventListener('copy', function(e) {
+            e.preventDefault();
+        });
+        
+        document.addEventListener('cut', function(e) {
+            e.preventDefault();
+        });
+        
+        document.addEventListener('paste', function(e) {
+            e.preventDefault();
+        });
+        
+        
+        document.addEventListener('dragstart', function(e) {
+            e.preventDefault();
+        });
+        
+        document.addEventListener('drop', function(e) {
+            e.preventDefault();
+        });
+    </script>
 <script>
-document.addEventListener('DOMContentLoaded', () => {
-  const rotateDeviceMessage = document.getElementById('rotateDevice');
-  const mediaPlayer = document.getElementById('mediaPlayer');
-  const watermark = document.getElementById('watermark');
-  const overlay = document.getElementById('overlay');
-  const skipIntroBtn = document.getElementById('skipIntroBtn');
-  let isPaused = false;
-  let skipIntroClicked = false;
-
-  function checkOrientation() {
-    if (window.innerHeight > window.innerWidth) {
-      rotateDeviceMessage.classList.add('active');
-      mediaPlayer.pause();
-    } else {
-      rotateDeviceMessage.classList.remove('active');
-    }
-  }
-
-  window.addEventListener('resize', checkOrientation);
-  window.addEventListener('load', checkOrientation);
-
-  document.addEventListener('fullscreenchange', () => {
-    if (document.fullscreenElement) {
-      mediaPlayer.classList.add('fullscreen');
-      watermark.style.pointerEvents = 'none'; // Disable watermark click in fullscreen
-    } else {
-      mediaPlayer.classList.remove('fullscreen');
-      watermark.style.pointerEvents = 'auto'; // Enable watermark click outside fullscreen
-    }
-  });
-
-  watermark.addEventListener('click', () => {
-    if (watermark.classList.contains('show') && !mediaPlayer.classList.contains('fullscreen')) {
-      if (!isPaused) {
-        mediaPlayer.pause();
-        overlay.classList.remove('inactive');
-        overlay.classList.add('active');
-        isPaused = true;
-      } else {
-        mediaPlayer.play();
-        overlay.classList.remove('active');
-        overlay.classList.add('inactive');
-        isPaused = false;
-      }
-    }
-  });
-
-  overlay.addEventListener('click', () => {
-    mediaPlayer.play();
-    overlay.classList.remove('active');
-    overlay.classList.add('inactive');
-    isPaused = false;
-  });
-
-  mediaPlayer.addEventListener('pause', () => {
-    document.body.style.background = 'black';
-  });
-
-  mediaPlayer.addEventListener('ended', () => {
-    document.body.style.background = 'black';
-  });
-
-  const wifiIcon = document.getElementById('wifiIcon');
-
-  function checkInternetConnection() {
-    if (navigator.onLine) {
-      wifiIcon.classList.remove('fade-out');
-      wifiIcon.style.display = 'none';
-      watermark.classList.remove('fade-out');
-    } else {
-      wifiIcon.style.display = 'block';
-      setTimeout(() => {
-        wifiIcon.classList.remove('fade-out');
-        watermark.classList.add('fade-out');
-      }, 10);
-    }
-  }
-
-  function hideWifiIcon() {
-    wifiIcon.classList.add('fade-out');
-    watermark.classList.remove('fade-out');
-    setTimeout(() => {
-      wifiIcon.style.display = 'none';
-    }, 500);
-  }
-
-  function showWifiIcon() {
-    if (!navigator.onLine) {
-      wifiIcon.style.display = 'block';
-      setTimeout(() => {
-        wifiIcon.classList.remove('fade-out');
-        watermark.classList.add('fade-out');
-      }, 10);
-    }
-  }
-
-  window.addEventListener('online', checkInternetConnection);
-  window.addEventListener('offline', checkInternetConnection);
-  window.addEventListener('load', checkInternetConnection);
-
-  document.addEventListener('contextmenu', event => event.preventDefault());
-  document.addEventListener('dragstart', event => event.preventDefault());
-  document.addEventListener('selectstart', event => event.preventDefault());
-  document.addEventListener('copy', event => event.preventDefault());
-  document.addEventListener('cut', event => event.preventDefault());
-  document.addEventListener('paste', event => event.preventDefault());
-
-  window.addEventListener('load', () => {
-    mediaPlayer.volume = 0.8;
-    history.pushState(null, '', '/');
-  });
-
-  document.addEventListener('keydown', event => {
-    if (event.code === 'Space') {
-      if (mediaPlayer.paused) {
-        mediaPlayer.play();
-      } else {
-        mediaPlayer.pause();
-      }
-    }
-  });
-
-  function fadeInAudio() {
-    let volume = 0;
-    mediaPlayer.volume = volume;
-    const fadeDuration = 3000;
-    const interval = 240;
-    const step = 0.8 / (fadeDuration / interval);
-
-    const fadeInterval = setInterval(() => {
-      if (volume < 0.8) {
-        volume = Math.min(volume + step, 0.8);
-        mediaPlayer.volume = volume;
-      } else {
-        clearInterval(fadeInterval);
-      }
-    }, interval);
-  }
-
-  mediaPlayer.addEventListener('play', fadeInAudio);
-
-  function skipIntro() {
-    mediaPlayer.currentTime = 60; //Skip time
-    skipIntroBtn.classList.remove('show');
-    skipIntroBtn.style.pointerEvents = 'none';
-    watermark.style.display = 'block';
-  }
-
-  skipIntroBtn.addEventListener('click', () => {
-    if (!skipIntroClicked) {
-      skipIntroClicked = true;
-      skipIntro();
-    }
-  });
-
-  setTimeout(() => {
-    if (!skipIntroClicked) {
-      skipIntroBtn.classList.add('show');
-      skipIntroBtn.style.pointerEvents = 'auto';
-      watermark.style.display = 'none';
-      setTimeout(() => {
-        if (skipIntroBtn.classList.contains('show')) {
-          skipIntroBtn.classList.remove('show');
-          skipIntroBtn.style.pointerEvents = 'none';
-          watermark.style.display = 'block';
-        }
-      }, 20000); //Duration
-    }
-  }, 5000); //Start Skip-btn
-
-  setTimeout(() => {
-    watermark.classList.add('show');
-  }, 30000); //Start Watermark-btn
-});
-
+    const pagesList = [{
+        "name": "Home",
+        "url": "https://preview.cruip.com/stellar/index.html",
+        "active": true
+    }, {
+        "name": "About",
+        "url": "https://preview.cruip.com/stellar/about.html",
+        "active": false
+    }, {
+        "name": "Integrations",
+        "url": "https://preview.cruip.com/stellar/integrations.html",
+        "active": false
+    }, {
+        "name": "Integration Post",
+        "url": "https://preview.cruip.com/stellar/integrations-single.html",
+        "active": false
+    }, {
+        "name": "Pricing",
+        "url": "https://preview.cruip.com/stellar/pricing.html",
+        "active": false
+    }, {
+        "name": "Customers",
+        "url": "https://preview.cruip.com/stellar/customers.html",
+        "active": false
+    }, {
+        "name": "Customer Post",
+        "url": "https://preview.cruip.com/stellar/customer.html",
+        "active": false
+    }, {
+        "name": "Changelog",
+        "url": "https://preview.cruip.com/stellar/changelog.html",
+        "active": false
+    }, {
+        "name": "Sign in",
+        "url": "https://preview.cruip.com/stellar/signin.html",
+        "active": false
+    }, {
+        "name": "Sign up",
+        "url": "https://preview.cruip.com/stellar/signup.html",
+        "active": false
+    }, {
+        "name": "Reset password",
+        "url": "https://preview.cruip.com/stellar/reset-password.html",
+        "active": false
+    }];
+    if (window != top) {
+        window.parent.postMessage(pagesList, "https://pokket.ir")
+    };
 </script>
 
-</body>
-</html>
+
+</body></html>
