@@ -28,6 +28,8 @@ body {
     -webkit-user-select: none;
     -moz-user-select: none;
     -ms-user-select: none;
+    scrollbar-width: thin;
+    scrollbar-color: #888 #f5f5f5;
     margin: 0;
     line-height: inherit;
     font-family: 'Vazirmatn', sans-serif !important
@@ -3530,7 +3532,7 @@ input[type="search"]::-webkit-search-results-decoration {
 }
 
 .c3d7q {
-    background: linear-gradient(#0c1615, #000) padding-box, conic-gradient(#c7d0d0, #3e4343 25%, #636363 75%, #e1e4e4 100%) border-box
+    background: linear-gradient(#101d1c, #000) padding-box, conic-gradient(#c7d0d0, #3e4343 25%, #636363 75%, #e1e4e4 100%) border-box
 }
 
 .ce26k {
@@ -4946,4 +4948,23 @@ input[type="search"]::-webkit-search-results-decoration {
 
 .cxwc3 div:nth-child(n+10):not(:nth-child(n+11)) {
     order: 2 !important
+}
+
+::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background-color: #888;
+    border-radius: 10px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background-color: #555;
+  }
+
+  @media print {
+    body {
+        display: none;
+    }
 }
