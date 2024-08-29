@@ -1,124 +1,249 @@
 <!DOCTYPE html>
-<html lang="fa" class="cmmz3">
-    <head>
-        <!-- Basic Meta Tags -->
-        <meta charset="utf-8">
-        <title>اپلیکیشن پاکت - شبکه اجتماعی مبتنی بر متن</title>
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <meta name="theme-color" content="#000000">
-        <meta name="description"
-            content="پاکت، شبکه اجتماعی مبتنی بر متن برای دریافت محتواهای دستچین شده و مورد نیاز روزمره.">
-        <meta name="robots" content="index, follow">
-        <meta name="author" content="Aurum">
-        <meta name="keywords"
-            content="پاکت, شبکه اجتماعی, اپلیکیشن, محتوای دستچین شده, فارسی">
-        <meta http-equiv="Content-Language" content="fa_IR">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <meta http-equiv="Content-Security-Policy" content="report-uri /csp-violation-report-endpoint;">
-        <meta http-equiv="Content-Security-Policy" content="
-        default-src 'self';
-        script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdnjs.cloudflare.com https://www.googletagmanager.com;
-        style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://unpkg.com https://swiperjs.com;
-        font-src 'self' https://fonts.gstatic.com;
-        img-src 'self' data:;
-        media-src 'self' https://cdn.jsdelivr.net;
-        connect-src 'self' https://cdn.jsdelivr.net;
-        frame-src 'self';
-        object-src 'none';
-        form-action 'self';
-        base-uri 'self';
-    ">
+<head>
+    <!-- Basic Meta Tags -->
+    <meta charset="utf-8">
+    <title>اپلیکیشن پاکت - شبکه اجتماعی مبتنی بر متن | دریافت محتواهای دستچین شده</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+    <meta name="theme-color" content="#000000">
+    <meta name="description" content="پاکت، شبکه اجتماعی مبتنی بر متن برای دریافت محتواهای دستچین شده و مورد نیاز روزمره. با پاکت، به دنیای اطلاعات شخصی‌سازی شده خود وارد شوید.">
+    <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+    <meta name="author" content="Aurum">
+    <meta name="keywords" content="پاکت, شبکه اجتماعی, اپلیکیشن, محتوای دستچین شده, فارسی, اشتراک‌گذاری محتوا, جامعه آنلاین">
+    <meta http-equiv="Content-Language" content="fa-IR">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    
+    <!-- Security Headers -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdnjs.cloudflare.com https://www.googletagmanager.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://unpkg.com https://swiperjs.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; media-src 'self' https://cdn.jsdelivr.net; connect-src 'self' https://cdn.jsdelivr.net; frame-src 'self'; object-src 'none'; form-action 'self'; base-uri 'self'; report-uri /csp-violation-report-endpoint;">
+    <meta http-equiv="X-Frame-Options" content="SAMEORIGIN">
+    <meta http-equiv="X-XSS-Protection" content="1; mode=block">
+    <meta http-equiv="X-Content-Type-Options" content="nosniff">
+    <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin">
+    
+    <!-- Open Graph Meta Tags for Social Sharing -->
+    <meta property="og:title" content="اپلیکیشن پاکت - شبکه اجتماعی مبتنی بر متن | دریافت محتواهای دستچین شده">
+    <meta property="og:description" content="پاکت، شبکه اجتماعی مبتنی بر متن برای دریافت محتواهای دستچین شده و مورد نیاز روزمره. با پاکت، به دنیای اطلاعات شخصی‌سازی شده خود وارد شوید.">
+    <meta property="og:url" content="https://pokket.ir/">
+    <meta property="og:type" content="website">
+    <meta property="og:image" content="https://pokket.ir/images/social-share.jpg">
+    <meta property="og:image:alt" content="نمایی از اپلیکیشن پاکت">
+    <meta property="og:locale" content="fa_IR">
+    <meta property="og:site_name" content="اپلیکیشن پاکت">
 
-        <!-- Open Graph Meta Tags for Social Sharing -->
-        <meta property="og:title"
-            content="اپلیکیشن پاکت - شبکه اجتماعی مبتنی بر متن">
-        <meta property="og:description"
-            content="پاکت، شبکه اجتماعی مبتنی بر متن برای دریافت محتواهای دستچین شده و مورد نیاز روزمره.">
-        <meta property="og:url" content="https://pokket.ir/">
-        <meta property="og:type" content="website">
-        <meta property="og:image"
-            content="https://pokket.ir/images/social-share.jpg">
-        <meta property="og:locale" content="fa_IR">
+    <!-- Twitter Card Meta Tags -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:site" content="@pokketapp">
+    <meta name="twitter:creator" content="@pokketapp">
+    <meta name="twitter:title" content="اپلیکیشن پاکت - شبکه اجتماعی مبتنی بر متن | دریافت محتواهای دستچین شده">
+    <meta name="twitter:description" content="پاکت، شبکه اجتماعی مبتنی بر متن برای دریافت محتواهای دستچین شده و مورد نیاز روزمره. با پاکت، به دنیای اطلاعات شخصی‌سازی شده خود وارد شوید.">
+    <meta name="twitter:image" content="https://pokket.ir/images/social-share.jpg">
+    <meta name="twitter:image:alt" content="نمایی از اپلیکیشن پاکت">
 
-        <!-- Twitter Card Meta Tags -->
-        <meta name="twitter:card" content="summary_large_image">
-        <meta name="twitter:title"
-            content="اپلیکیشن پاکت - شبکه اجتماعی مبتنی بر متن">
-        <meta name="twitter:description"
-            content="پاکت، شبکه اجتماعی مبتنی بر متن برای دریافت محتواهای دستچین شده و مورد نیاز روزمره.">
-        <meta name="twitter:image"
-            content="https://pokket.ir/images/social-share.jpg">
+    <!-- Favicon and App Icons -->
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
 
-        <!-- Favicon -->
-        <link rel="icon" href="https://pokket.ir/favicon.ico"
-            type="image/x-icon">
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://pokket.ir/">
 
-        <!-- Canonical URL -->
-        <link rel="canonical" href="https://pokket.ir/">
+    <!-- Preload Key Resources -->
+    <link rel="preload" href="/css/style.css?v=1.1" as="style">
+    <link rel="preload" href="/font/Vazirmatn-RD[wght].woff2" as="font" type="font/woff2" crossorigin>
 
-        <!-- Stylesheets -->
-        <link href="css/H9jtdUI0aO2h.css"
-            rel="stylesheet">
-        <link href="css/q4bvs0plsqFT.css"
-            rel="stylesheet">
-        <link href="css/2Ixo1unrhTIq.css"
-            rel="stylesheet">
-        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;700&display=swap" integrity="sha384-g25HNXa4HVnX/KP2HNVqpa5MQNMZoA6siTy/BnvSClQ7PxtQuFf6j/FMsQCbROd2" crossorigin="anonymous">
+    <!-- Stylesheets -->
+    <link href="/css/style.css?v=1.1" rel="stylesheet">
 
-        <!-- Preload Key Resources -->
-        <link rel="preload"
-            href="css/H9jtdUI0aO2h.css?v=1.0"
-            as="style">
-        <link rel="preload" href="css/q4bvs0plsqFT.css"
-            as="style">
-        <link rel="preload" href="css/2Ixo1unrhTIq.css"
-            as="style">
-        <link rel="preload"
-            href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;700&display=swap"
-            as="font" type="font/woff2" integrity="sha384-g25HNXa4HVnX/KP2HNVqpa5MQNMZoA6siTy/BnvSClQ7PxtQuFf6j/FMsQCbROd2" crossorigin="anonymous">
+    <!-- Scripts -->
+    <script src="js/script.js" defer></script>
 
-        <!-- JSON-LD Structured Data -->
-        <script type="application/ld+json">
-            {
-              "@context": "https://schema.org",
-              "@type": "Organization",
-              "name": "اپلیکیشن پاکت",
-              "url": "https://pokket.ir/",
-              "logo": "https://pokket.ir/images/logo.png",
-              "sameAs": [
-                "https://www.facebook.com/pokket",
-                "https://www.instagram.com/pokket"
-              ],
-              "contactPoint": {
-                "@type": "ContactPoint",
-                "telephone": "+98-21-12345678",
-                "contactType": "Customer Service"
-              },
-              "address": {
-                "@type": "PostalAddress",
-                "streetAddress": "123 Main St",
-                "addressLocality": "Tehran",
-                "addressRegion": "TH",
-                "postalCode": "12345",
-                "addressCountry": "IR"
-              },
-              "founder": {
-                "@type": "Person",
-                "name": "John Doe"
-              }
-            }
-            </script>
-
-        <!-- Google Tag Manager -->
-        <script>
-        (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-        new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-        j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-        'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-        })(window,document,'script','dataLayer','GTM-PD678228');
+    <!-- JSON-LD Structured Data -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "name": "اپلیکیشن پاکت",
+      "alternateName": "Pokket App",
+      "url": "https://pokket.ir/",
+      "logo": "https://pokket.ir/images/logo.png",
+      "sameAs": [
+        "https://www.facebook.com/pokket",
+        "https://www.instagram.com/pokket",
+        "https://twitter.com/pokketapp"
+      ],
+      "contactPoint": {
+        "@type": "ContactPoint",
+        "telephone": "+98-21-12345678",
+        "contactType": "customer service",
+        "availableLanguage": ["Persian", "English"]
+      },
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "123 Main St",
+        "addressLocality": "Tehran",
+        "addressRegion": "TH",
+        "postalCode": "12345",
+        "addressCountry": "IR"
+      },
+      "founder": {
+        "@type": "Person",
+        "name": "John Doe"
+      },
+      "description": "پاکت، شبکه اجتماعی مبتنی بر متن برای دریافت محتواهای دستچین شده و مورد نیاز روزمره."
+    }
     </script>
-        <!-- End Google Tag Manager -->
-    </head>
+
+    <!-- Google Tag Manager -->
+    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+    })(window,document,'script','dataLayer','GTM-PD678228');</script>
+
+    <!-- Structured Data for Breadcrumbs -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": [{
+        "@type": "ListItem",
+        "position": 1,
+        "name": "صفحه اصلی",
+        "item": "https://pokket.ir/"
+      }]
+    }
+    </script>
+
+    <!-- Preconnect to External Domains -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://www.googletagmanager.com">
+
+    <!-- Performance Optimization -->
+    <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
+    <link rel="dns-prefetch" href="https://cdnjs.cloudflare.com">
+
+    <!-- PWA Support -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-title" content="Pokket">
+
+    <!-- Preload Hero Image -->
+    <link rel="preload" as="image" href="/images/IxyeeYtlSJGw.svg">
+    <link rel="preload" as="image" href="/images/cGpudszhze5x.svg">
+
+    <!-- Structured Data for FAQs -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [{
+        "@type": "Question",
+        "name": "پاکت چیست؟",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "پاکت یک شبکه اجتماعی مبتنی بر متن است که به شما امکان می‌دهد محتواهای دستچین شده و مورد نیاز روزمره خود را دریافت کنید."
+        }
+      }, {
+        "@type": "Question",
+        "name": "چگونه می‌توانم از پاکت استفاده کنم؟",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "برای استفاده از پاکت، کافیست اپلیکیشن را دانلود کرده، ثبت‌نام کنید و علایق خود را مشخص کنید. سپس محتواهای شخصی‌سازی شده برای شما ارائه می‌شود."
+        }
+      }]
+    }
+    </script>
+
+    <!-- Hreflang Tags for Language Variants -->
+    <link rel="alternate" hreflang="fa" href="https://pokket.ir/">
+
+    <!-- Structured Data for SiteNavigationElement -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "SiteNavigationElement",
+      "name": ["صفحه اصلی", "درباره ما", "تماس با ما", "بلاگ"],
+      "url": [
+        "https://pokket.ir/",
+        "https://pokket.ir/about",
+        "https://pokket.ir/contact",
+        "https://pokket.ir/blog"
+      ]
+    }
+    </script>
+
+    <!-- Lazy Load Images Script -->
+    <script>
+    document.addEventListener("DOMContentLoaded", function() {
+      var lazyImages = [].slice.call(document.querySelectorAll("img.lazy"));
+      if ("IntersectionObserver" in window) {
+        let lazyImageObserver = new IntersectionObserver(function(entries, observer) {
+          entries.forEach(function(entry) {
+            if (entry.isIntersecting) {
+              let lazyImage = entry.target;
+              lazyImage.src = lazyImage.dataset.src;
+              lazyImage.classList.remove("lazy");
+              lazyImageObserver.unobserve(lazyImage);
+            }
+          });
+        });
+        lazyImages.forEach(function(lazyImage) {
+          lazyImageObserver.observe(lazyImage);
+        });
+      }
+    });
+    </script>
+
+    <!-- Add Meta Tags for Better SEO -->
+    <meta name="geo.region" content="IR-07" />
+    <meta name="geo.placename" content="Tehran" />
+
+    <!-- Add Support for App Indexing -->
+    <meta name="google-play-app" content="app-id=co.pokket">
+    <meta name="bazaar-app" content="app-id=co.pokket">
+    <link rel="alternate" href="https://cafebazaar.ir/app/co.pokket" title="Download from Bazaar">
+    <meta name="myket-app" content="app-id=co.pokket">
+    <link rel="alternate" href="https://myket.ir/app/co.pokket" title="Download from Myket">
+    
+    <!-- Implement Browser Caching -->
+    <meta http-equiv="Cache-Control" content="max-age=1209600">
+
+    <!-- Implement Structured Data for Software Application -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "SoftwareApplication",
+      "name": "پاکت",
+      "operatingSystem": "Android, iOS",
+      "applicationCategory": "SocialNetworkingApplication",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "IRR"
+      },
+      "author": {
+        "@type": "Organization",
+        "name": "Pokket Inc."
+      },
+      "datePublished": "2023-05-01",
+      "softwareVersion": "1.2.3",
+      "aggregateRating": {
+        "@type": "AggregateRating",
+        "ratingValue": "4.5",
+        "ratingCount": "1023"
+      },
+      "description": "پاکت یک اپلیکیشن شبکه اجتماعی است که به کاربران امکان می‌دهد محتوا را به اشتراک بگذارند و با دیگران ارتباط برقرار کنند.",
+      "downloadUrl": "https://example.com/download"
+    }
+    </script>
+        
+    <!-- Implement HTTP Strict Transport Security (HSTS) -->
+    <meta http-equiv="Strict-Transport-Security" content="max-age=63072000; includeSubDomains; preload">
+
+    <!-- Implement Feature Policy for Permissions -->
+    <meta http-equiv="Permissions-Policy" content="fullscreen=(self)">
+</head>
 
 
 
@@ -349,8 +474,6 @@
 
                         <div class="ce968 cx3i6">
                             <div class="cbvce">
-                                <!-- Carousel built with Swiper.js [https://swiperjs.com/] -->
-                                <!-- * Initialized in src/js/YxCp7BHO4ZYI.js -->
                                 <div
                                     class="clients-carousel swiper-container c272e c43wz c5sp8 cjld2 cz5p2 ce99m c1mpe cht44 ccqfq ciw4n cww36 cawys cek60 cyayz cvjqm c27r3 swiper-initialized swiper-horizontal swiper-pointer-events swiper-android">
                                     <div
@@ -968,7 +1091,8 @@
                                                             src="images/yd3FiG5o50yN.png"
                                                             width="504"
                                                             height="400"
-                                                            alt="Feature 01">
+                                                            alt="Feature 01"
+                                                            loading="lazy">
                                                     </div>
                                                 </div>
                                             </div>
@@ -1016,7 +1140,8 @@
                                                             src="images/mwcCuYACJx38.png"
                                                             width="536"
                                                             height="230"
-                                                            alt="Feature 02">
+                                                            alt="Feature 02"
+                                                            loading="lazy">
                                                     </div>
                                                 </div>
                                             </div>
@@ -1064,7 +1189,8 @@
                                                             src="images/ouVKUItzYM3y.png"
                                                             width="230"
                                                             height="230"
-                                                            alt="Feature 03">
+                                                            alt="Feature 03"
+                                                            loading="lazy">
                                                     </div>
                                                 </div>
                                             </div>
@@ -1133,7 +1259,8 @@
                                                 <img
                                                     src="images/p5HmbQ6n0t6h.png"
                                                     width="768" height="400"
-                                                    alt="Feature 04">
+                                                    alt="Feature 04"
+                                                    loading="lazy">
                                             </div>
                                         </div>
                                     </div>
@@ -1167,8 +1294,6 @@
                                     است.</p>
                             </div>
 
-                            <!-- Carousel built with Swiper.js [https://swiperjs.com/] -->
-                            <!-- * Initialized in src/js/YxCp7BHO4ZYI.js -->
                             <div
                                 class="cv05a cylw7 csfv2 ctxpg cz1fi cr8xw cq1o6 cfvvn c1mpe ccqfq clxx2 ciw4n cww36 cs2p7 cbby6 c7lkj c27r3">
                                 <div
@@ -1208,7 +1333,8 @@
                                                     <img class="c9eco"
                                                         src="images/NuPPnccwV5aR.svg"
                                                         width="56" height="56"
-                                                        alt="Icon 01">
+                                                        alt="Icon 01"
+                                                        loading="lazy">
                                                     <div class="c9wgl">
                                                         <div
                                                             class="cflos cbgr1 c986a">ویژگی
@@ -1259,7 +1385,8 @@
                                                     <img class="c9eco"
                                                         src="images/JZQ2aHbb2R9o.svg"
                                                         width="56" height="56"
-                                                        alt="Icon 01">
+                                                        alt="Icon 01"
+                                                        loading="lazy">
                                                     <div class="c9wgl">
                                                         <div
                                                             class="cflos cbgr1 c986a">ویژگی
@@ -1310,7 +1437,8 @@
                                                     <img class="c9eco"
                                                         src="images/VsrdJJporGMp.svg"
                                                         width="56" height="56"
-                                                        alt="Icon 01">
+                                                        alt="Icon 01"
+                                                        loading="lazy">
                                                     <div class="c9wgl">
                                                         <div
                                                             class="cflos cbgr1 c986a">ویژگی
@@ -1361,7 +1489,8 @@
                                                     <img class="c9eco"
                                                         src="images/JTG1mJnZtWAJ.svg"
                                                         width="56" height="56"
-                                                        alt="Icon 01">
+                                                        alt="Icon 01"
+                                                        loading="lazy">
                                                     <div class="c9wgl">
                                                         <div
                                                             class="cflos cbgr1 c986a">ویژگی
@@ -1412,7 +1541,8 @@
                                                     <img class="c9eco"
                                                         src="images/NUc4TdiFv2DE.svg"
                                                         width="56" height="56"
-                                                        alt="Icon 05">
+                                                        alt="Icon 05"
+                                                        loading="lazy">
                                                     <div class="c9wgl">
                                                         <div
                                                             class="cflos cbgr1 c986a">ویژگی
@@ -1806,12 +1936,6 @@
             </main>
 
         </div>
-
-        <!-- Scripts -->
-        <script src="js/4vDv9b2so9dk.js" defer></script>
-        <script src="js/hDV4zsnluPZK.js" defer></script>
-        <script src="js/ZFFwelt1HaZR.js" defer></script>
-        <script src="js/YxCp7BHO4ZYI.js" defer></script>
 
         <script>
         document.addEventListener('contextmenu', function(e) {
