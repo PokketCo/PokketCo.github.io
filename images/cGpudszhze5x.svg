@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1404" height="658">
+  <defs>
+    <radialGradient id="b" cx="50%" cy="0%" r="106.751%" fx="50%" fy="0%" gradientTransform="matrix(0 1 -.28313 0 .5 -.5)">
+      <stop offset="0%" stop-color="#309B88"/>
+      <stop offset="22.35%" stop-color="#30A08B" stop-opacity=".64"/>
+      <stop offset="100%" stop-color="#001C17" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="c" x1="19.609%" x2="50%" y1="14.544%" y2="100%">
+      <stop offset="0%" stop-color="#34B49D"/>
+      <stop offset="100%" stop-color="#7CC3B6" stop-opacity="0"/>
+    </linearGradient>
+    <filter id="d" width="165.1%" height="170.3%" x="-32.5%" y="-35.1%" filterUnits="objectBoundingBox">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="50"/>
+    </filter>
+    <path id="a" d="M0 0h2324v658H0z"/>
+  </defs>
+  <g fill="none" fill-rule="evenodd" transform="translate(-460)" opacity=".5">
+    <mask id="e" fill="#41B89B">
+      <use xlink:href="#a"/>
+    </mask>
+    <use xlink:href="#a" fill="url(#b)"/>
+    <path fill="url(#c)" d="m629-216 461 369-284 58z" filter="url(#d)" mask="url(#e)"/>
+  </g>
+</svg>
